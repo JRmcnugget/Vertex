@@ -1,6 +1,7 @@
 --Vertex v0.01 
 -- by JRmcnugget
--- Settings begin line 11
+
+local VertexManager = {}
 
 --Roblox Services
 local userInputService = game:GetService("UserInputService")
@@ -10,9 +11,21 @@ local VertexLib = replicatedStorage:WaitForChild('VertexLib')
 
 --Settings
 local config = require(VertexLib:WaitForChild('VetexConfig'))
-local StateFolder = config.stateFolder
 
 --Modules
-local States = StateFolder:GetChildren()
+local States = config.stateFolder:GetChildren()
 local PhysLib = VertexLib:WaitForChild('PhysicsLib')
 local VFXCore = VertexLib:WaitForChild('VFXCore')
+
+--GlobalState // variables shared across all states
+local GlobalState = {
+    Number = 0
+}
+
+-- module data pass test, delete me later
+local module = require(VertexLib.States.BaseState)
+local state = module.new(VertexManager, GlobalState)
+state:onBegin()
+function VertexManager:amongus()
+    print('VertexManager says hi')
+end

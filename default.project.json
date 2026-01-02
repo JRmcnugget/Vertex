@@ -4,8 +4,8 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "Shared": {
-        "$path": "src/shared"
+      "VertexLib": {
+        "$path": "src/VertexLib"
       }
     },
 

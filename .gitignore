@@ -1,5 +1,5 @@
 # Project place file
-/KineticV2.rbxlx
+/KineticV2.rbxl
 
 # Roblox Studio lock files
 /*.rbxlx.lock
@@ -7,3 +7,4 @@
 
 sourcemap.json
 aftman.toml
+.vscode/

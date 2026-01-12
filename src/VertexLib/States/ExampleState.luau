@@ -1,5 +1,4 @@
 local State = {}
-local StateMeta = {__index = State}
 
 function State.new(Manager)
     local self = {

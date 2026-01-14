@@ -1,22 +1,17 @@
 --Vertex v0.02
 -- by JRmcnugget
 
--- TODO: move to starterplayer to prevent unnessecary cpu util upon character reinitalize
+--inital player instance validation
+local Player = script.Parent
+if not Player:IsA('Player') then
+    error("Vertex is not parented to a player and will not function! Did you make sure to parent Vertex to StarterPlayerScripts?")
+end
 
 --Roblox Services
-local BadgeService = game:GetService("BadgeService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TutorialService = game:GetService("TutorialService")
 local userInputService = game:GetService("UserInputService")
 local runService = game:GetService("RunService")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local VertexLib = replicatedStorage:WaitForChild('VertexLib')
-
---player variables
-local char = script.Parent
-local player = game.Players:GetPlayerFromCharacter(char)
-local humanoid = char:WaitForChild("Humanoid")
-local humanoidRootPart = char:WaitForChild("HumanoidRootPart")
 
 -- Script Manager
 local VertexManager = {}
@@ -25,25 +20,26 @@ local VertexManager = {}
 VertexManager.Config = require(VertexLib:WaitForChild('VertexConfig'))
 VertexManager.States = {}
 VertexManager.Components = {}
-VertexManager.updateFunctions = {}
 VertexManager.ActiveState = nil
 
 -- GlobalState // variables shared across all systems
 VertexManager.GlobalState = {
-    player = player,
-    char = char,
-    humanoid = humanoid,
-    humanoidRootPart = humanoidRootPart
+    plr = Player 
 }
 
 -- BaseState // default values/capabilities for a state to inheret upon loading
 VertexManager.BaseState = {
     updateMoveDir = true,
     updateLookDir = true,
+    interruptable = false,
     canJump = false,
     canCrouch = false
 }
 VertexManager.BaseState.__index = VertexManager.BaseState
+
+function VertexManager:changeState()
+    --todo
+end
 
 function VertexManager:loadStates()
     local moduleList = VertexManager.Config.stateFolder:GetChildren()
@@ -64,17 +60,18 @@ function VertexManager:loadComponents()
     --todo
 end
 
-function VertexManager:changeState()
+function VertexManager:InputHandler()
     --todo
 end
 
-function VertexManager:InputHandler()
-    --todo
+function VertexManager:deathCleanup()
+
 end
 
 function VertexManager:update(dt)
     --update loop, todo
 end
 runService.RenderStepped:Connect(VertexManager.update)
+
 
 VertexManager:loadStates()

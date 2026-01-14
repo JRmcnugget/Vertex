@@ -34,7 +34,7 @@ VertexManager.StateDefaults = {
 VertexManager.StateDefaults.__index = VertexManager.StateDefaults
 
 function VertexManager:Init()
-    local plrInstance = script.Parent
+    local plrInstance = script.Parent.Parent
     if plrInstance:IsA("Player") then
         self.Player = plrInstance
     else

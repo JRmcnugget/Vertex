@@ -2,7 +2,6 @@
 -- by JRmcnugget
 
 --Roblox Services
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local userInputService = game:GetService("UserInputService")
 local runService = game:GetService("RunService")
 local replicatedStorage = game:GetService("ReplicatedStorage")

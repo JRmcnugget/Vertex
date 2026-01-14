@@ -35,11 +35,10 @@ VertexManager.StateDefaults.__index = VertexManager.StateDefaults
 
 function VertexManager:Init()
     local plrInstance = script.Parent.Parent
-    if plrInstance:IsA("Player") then
-        self.Player = plrInstance
-    else
+    if not plrInstance:IsA("Player") then
         error("Invalid Player instance! Did you parent Vertex improperly?")
     end
+    self.Player = plrInstance
     
     self:loadStates()
 

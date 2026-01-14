@@ -1,41 +1,55 @@
---Vertex v0.02
+--Vertex v0.03
 -- by JRmcnugget
 
---inital player instance validation
-local Player = script.Parent
-if not Player:IsA('Player') then
-    error("Vertex is not parented to a player and will not function! Did you make sure to parent Vertex to StarterPlayerScripts?")
-end
-
 --Roblox Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local userInputService = game:GetService("UserInputService")
 local runService = game:GetService("RunService")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local VertexLib = replicatedStorage:WaitForChild('VertexLib')
 
--- Script Manager
+-- THE vertex manager itself
 local VertexManager = {}
 
--- Configuration
-VertexManager.Config = require(VertexLib:WaitForChild('VertexConfig'))
+-- VertexManager Properties
+VertexManager.Config = require(VertexLib.VertexConfig)
+VertexManager.ActiveState = nil
+VertexManager.Player = nil
 VertexManager.States = {}
 VertexManager.Components = {}
-VertexManager.ActiveState = nil
 
--- GlobalState // variables shared across all systems
-VertexManager.GlobalState = {
-    plr = Player 
+-- Shared // variables available for ready access across any State or Component
+VertexManager.Shared = {
+    char = nil, 
+    humanoid = nil,
+    humanoidRoot = nil
+
 }
 
--- BaseState // default values/capabilities for a state to inheret upon loading
-VertexManager.BaseState = {
-    updateMoveDir = true,
-    updateLookDir = true,
+-- StateDefaults // base variables and/or capabilites of a state to inheret upon loading. Anything written in the state's .new() will override these
+VertexManager.StateDefaults = {
     interruptable = false,
-    canJump = false,
-    canCrouch = false
+    isEpic = false
 }
-VertexManager.BaseState.__index = VertexManager.BaseState
+VertexManager.StateDefaults.__index = VertexManager.StateDefaults
+
+function VertexManager:Init()
+    local plrInstance = script.Parent
+    if plrInstance:IsA("Player") then
+        self.Player = plrInstance
+    else
+        error("Invalid Player instance! Did you parent Vertex improperly?")
+    end
+    
+    self:loadStates()
+
+    print('ok done')
+    print(self)
+end
+
+function VertexManager:Cleanup()
+
+end
 
 function VertexManager:changeState()
     --todo
@@ -53,7 +67,7 @@ function VertexManager:loadStates()
             warn("Instance "..module.Name.." is not a modulescript, ignoring...")
         end
     end
-    print(self)
+    return true
 end
 
 function VertexManager:loadComponents()
@@ -64,14 +78,9 @@ function VertexManager:InputHandler()
     --todo
 end
 
-function VertexManager:deathCleanup()
+function update(dt)
 
 end
+runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, update)
 
-function VertexManager:update(dt)
-    --update loop, todo
-end
-runService.RenderStepped:Connect(VertexManager.update)
-
-
-VertexManager:loadStates()
+VertexManager:Init()

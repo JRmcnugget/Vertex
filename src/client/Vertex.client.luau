@@ -40,6 +40,14 @@ function VertexManager:Init()
     self.Player = plrInstance
     
     self:loadStates()
+    local currentChar = self.Player.Character
+    if currentChar then -- if character exists, we can update character values before adding a CharacterAdded connection
+        VertexManager:updateCharacter()
+    end
+    
+    self.Player.CharacterAdded:Connect(function(newModel)
+        VertexManager:updateCharacter(newModel)
+    end)
 
     print('ok done')
     print(self)
@@ -51,6 +59,12 @@ end
 
 function VertexManager:changeState()
     --todo
+end
+
+function VertexManager:updateCharacter(charModel)
+    self.Shared.char = charModel
+    self.Shared.humanoid = charModel:FindFirstChild("Humanoid")
+    self.Shared.humanoidRootPart = charModel:FindFirstChild('HumanoidRootPart')
 end
 
 function VertexManager:loadStates()

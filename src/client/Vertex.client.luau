@@ -52,6 +52,14 @@ function VertexManager:Init()
     print(self)
 end
 
+-- apparently there was something simplier than commit e76fd30, my bad, just overengineered to the max 
+function VertexManager:updateCharacter(newModel)
+    local humanoidInstance = newModel:WaitForChild("Humanoid")
+    local humanoidRootInstance = newModel:WaitForChild('HumanoidRootPart')
+    self.Shared.humanoid = humanoidInstance
+    self.Shared.humanoidRoot = humanoidRootInstance
+end
+
 function VertexManager:Cleanup()
 
 end
@@ -60,13 +68,7 @@ function VertexManager:changeState()
     --todo
 end
 
--- apparently there was something simplier than commit e76fd30, my bad, just overengineered to the max 
-function VertexManager:updateCharacter(newModel)
-    local humanoidInstance = newModel:WaitForChild("Humanoid")
-    local humanoidRootInstance = newModel:WaitForChild('HumanoidRootPart')
-    self.Shared.humanoid = humanoidInstance
-    self.Shared.humanoidRoot = humanoidRootInstance
-end
+
 
 function VertexManager:loadStates()
     local moduleList = VertexManager.Config.stateFolder:GetChildren()

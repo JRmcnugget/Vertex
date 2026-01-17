@@ -22,7 +22,6 @@ VertexManager.Shared = {
     char = nil, 
     humanoid = nil,
     humanoidRoot = nil
-
 }
 
 -- StateDefaults // base variables and/or capabilites of a state to inheret upon loading. Anything written in the state's .new() will override these
@@ -40,13 +39,13 @@ function VertexManager:Init()
     self.Player = plrInstance
     
     self:loadStates()
-    local currentChar = self.Player.Character
-    if currentChar then -- if character exists, we can update character values before adding a CharacterAdded connection
-        VertexManager:updateCharacter()
-    end
     
+    local removingCharacter = false
     self.Player.CharacterAdded:Connect(function(newModel)
-        VertexManager:updateCharacter(newModel)
+        self.Shared.Char = newModel
+        newModel.ChildAdded:Connect(function(instance)
+            self:updateCharacter(removingCharacter, instance)
+        end)
     end)
 
     print('ok done')
@@ -61,10 +60,28 @@ function VertexManager:changeState()
     --todo
 end
 
-function VertexManager:updateCharacter(charModel)
-    self.Shared.char = charModel
-    self.Shared.humanoid = charModel:FindFirstChild("Humanoid")
-    self.Shared.humanoidRootPart = charModel:FindFirstChild('HumanoidRootPart')
+-- this implementation is not fun, but there doesn't appear to be any other way to do this that is less redundant
+-- boolean, instance. Used to set new instance variables when a new character is loaded. Will only override if nil. if removingCharacter is false, instance will be ignored and charvalues will be set to nil
+function VertexManager:updateCharacter(removingCharacter, instance)
+    if (not removingCharacter and not instance) and self.Config.printWarnings then
+        error("Invalid variables called to Vertex:updateCharacters! Variables are: removingCharacter = "..tostring(removingCharacter)..", instance = "..tostring(instance)..". Variables should be: boolean, instance")
+    end
+    local requiredInstances = {"Humanoid", "HumanoidRootPart"} -- instances to look for
+    local instanceLinks = {"humanoid", "humanoidRoot"} -- variable names within VertexManager.Shared to override
+    if not removingCharacter then
+        for count, instance in pairs(requiredInstances) do
+            local managerSharedValue = self.Shared[instanceLinks[count]] -- find if the value already exists, if not we can set it
+            if instance == requiredInstances[count] and not managerSharedValue then
+                self.Shared[instanceLinks[count]] = instance
+                break
+            end
+        end
+    else
+        for count, instance in ipairs(instanceLinks) do
+            self.Shared[instanceLinks[count]] = nil
+        end
+    end
+    print(self)
 end
 
 function VertexManager:loadStates()

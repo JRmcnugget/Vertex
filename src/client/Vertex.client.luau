@@ -40,15 +40,15 @@ function VertexManager:Init()
     
     self:loadStates()
     
-    local removingCharacter = false
     self.Player.CharacterAdded:Connect(function(newModel)
         self.Shared.Char = newModel
-        newModel.ChildAdded:Connect(function(instance)
-            self:updateCharacter(removingCharacter, instance)
+        task.spawn(function()
+            self:updateCharacter(newModel)
         end)
     end)
 
     print('ok done')
+    task.wait(3)
     print(self)
 end
 
@@ -60,28 +60,12 @@ function VertexManager:changeState()
     --todo
 end
 
--- this implementation is not fun, but there doesn't appear to be any other way to do this that is less redundant
--- boolean, instance. Used to set new instance variables when a new character is loaded. Will only override if nil. if removingCharacter is false, instance will be ignored and charvalues will be set to nil
-function VertexManager:updateCharacter(removingCharacter, instance)
-    if (not removingCharacter and not instance) and self.Config.printWarnings then
-        error("Invalid variables called to Vertex:updateCharacters! Variables are: removingCharacter = "..tostring(removingCharacter)..", instance = "..tostring(instance)..". Variables should be: boolean, instance")
-    end
-    local requiredInstances = {"Humanoid", "HumanoidRootPart"} -- instances to look for
-    local instanceLinks = {"humanoid", "humanoidRoot"} -- variable names within VertexManager.Shared to override
-    if not removingCharacter then
-        for count, instance in pairs(requiredInstances) do
-            local managerSharedValue = self.Shared[instanceLinks[count]] -- find if the value already exists, if not we can set it
-            if instance == requiredInstances[count] and not managerSharedValue then
-                self.Shared[instanceLinks[count]] = instance
-                break
-            end
-        end
-    else
-        for count, instance in ipairs(instanceLinks) do
-            self.Shared[instanceLinks[count]] = nil
-        end
-    end
-    print(self)
+-- apparently there was something simplier than commit e76fd30, my bad, just overengineered to the max 
+function VertexManager:updateCharacter(newModel)
+    local humanoid = newModel:WaitForChild("Humanoid")
+    local humanoidRoot = newModel:WaitForChild('HumanoidRootPart')
+    self.Shared[humanoid] = humanoid
+    self.Shared[humanoidRoot] = humanoidRoot
 end
 
 function VertexManager:loadStates()

@@ -41,7 +41,7 @@ function VertexManager:Init()
     self:loadStates()
     
     self.Player.CharacterAdded:Connect(function(newModel)
-        self.Shared.Char = newModel
+        self.Shared.char = newModel
         task.spawn(function()
             self:updateCharacter(newModel)
         end)

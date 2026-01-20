@@ -1,17 +1,10 @@
-KineticV2
-Built using Rojo
+Vertex v0.04
+
+A modular framework designed to streamline the character creation process
 
 TODO:
-- create vertex controller main
-- create vertex api
-- create movement systems
- - walking
- - jumping
- - crouching
- - wallrun
- - crouch slide
- - dash
- - ledge grab
- - grapple
- - ground slam
- - slam dash
+- finish VertexManager
+- finish State & Component architecture
+- finish readme
+
+Built using Rojo

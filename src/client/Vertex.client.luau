@@ -24,7 +24,8 @@ VertexManager.Shared = {
     humanoidRoot = nil
 }
 
--- StateDefaults // base variables and/or capabilites of a state to inheret upon loading. Anything written in the state's .new() will override these
+-- StateDefaults // base variables and/or capabilites of a state to inheret upon loading. 
+-- Anything written in the state's .new() will override these
 VertexManager.StateDefaults = {
     interruptable = false,
     isEpic = false
@@ -46,10 +47,6 @@ function VertexManager:Init()
             self:updateCharacter(newModel)
         end)
     end)
-
-    print('ok done')
-    task.wait(3)
-    print(self)
 end
 
 -- apparently there was something simplier than commit e76fd30, my bad, just overengineered to the max 
@@ -64,7 +61,10 @@ function VertexManager:Cleanup()
 
 end
 
-function VertexManager:changeState()
+-- requests VertexManager to switch to a new state, as indicated by the newState variable. 
+-- runs each respective state's onEnter() and onExit(), and will ignore state.interruptable if boolean override is true.
+-- string (stateName), boolean (true/false)
+function VertexManager:changeState(newState, override)
     --todo
 end
 

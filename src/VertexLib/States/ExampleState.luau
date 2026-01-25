@@ -1,14 +1,13 @@
 local State = {}
+State.__index = State
 
 function State.new(Manager)
     local self = {
         Manager = Manager,
         Name = "Idle",
-        onEnter = State.onEnter,
-        onUpdate = State.onUpdate,
-        onExit = State.onExit
     }
-    return setmetatable(self, Manager.StateDefaults)
+    local stateInstance = setmetatable(State, Manager.StateDefaults)
+    return setmetatable(self, stateInstance)
 end
 
 function State:onEnter(dt)
@@ -18,7 +17,7 @@ function State:onEnter(dt)
 end
 
 function State:onUpdate(dt)
-
+    print(self)
 end
 
 function State:onExit(dt)

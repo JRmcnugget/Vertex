@@ -124,7 +124,14 @@ function VertexManager:InputHandler()
 end
 
 function VertexManager:update(dt)
-    print(self.AwaitingSignal)
+    if self.ActiveState ~= nil and not self.AwaitingSignal then
+        local StateName = self.ActiveState.Name and self.ActiveState.Name or tostring(self.ActiveState)
+        if self.ActiveState.onUpdate then
+            self.ActiveState:onUpdate(dt)
+        else
+            error("State "..StateName.." does not have an onUpdate function!")
+        end
+    end
 end
 runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, function(dt)
     VertexManager:update(dt)

@@ -21,10 +21,12 @@
       },
       "StarterCharacterScripts": {
         "$path": "src/character"
+      },
+      "StarterCharacter":{
+        "$path": "src/assets/character/StarterCharacter.rbxm"
       }
     },
     
-
     "Workspace": {
       "$properties": {
         "FilteringEnabled": true

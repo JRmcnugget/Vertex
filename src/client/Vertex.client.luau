@@ -123,9 +123,11 @@ function VertexManager:InputHandler()
     --todo
 end
 
-function update(dt)
-
+function VertexManager:update(dt)
+    print(self.AwaitingSignal)
 end
-runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, update)
+runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, function(dt)
+    VertexManager:update(dt)
+end)
 
 VertexManager:Init()

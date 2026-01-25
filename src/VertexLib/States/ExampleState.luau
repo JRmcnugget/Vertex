@@ -12,6 +12,7 @@ function State.new(Manager)
 end
 
 function State:onEnter(dt)
+    task.wait(5)
     print('Hi')
     return true
 end

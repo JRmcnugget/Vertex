@@ -21,7 +21,8 @@ VertexManager.Components = {}
 VertexManager.Shared = {
     char = nil, 
     humanoid = nil,
-    humanoidRoot = nil
+    humanoidRoot = nil,
+    inputDirection = Vector3.new(0,0,0)
 }
 
 -- StateDefaults // base variables and/or capabilites of a state to inheret upon loading. 
@@ -33,7 +34,7 @@ VertexManager.StateDefaults = {
 VertexManager.StateDefaults.__index = VertexManager.StateDefaults
 
 function VertexManager:Init()
-    local plrInstance = script.Parent.Parent
+    local plrInstance = game.Players.LocalPlayer
     if not plrInstance:IsA("Player") then
         error("Invalid Player instance! Did you parent Vertex improperly?")
     end
@@ -78,6 +79,7 @@ function VertexManager:loadStates()
             local stateInstance = stateModule.new(self)
             local stateName = stateInstance.Name and stateInstance.Name or module.Name
             self.States[stateName] = stateInstance
+            print(stateInstance.interruptable)
         elseif self.Config.printWarnings then
             warn("Instance "..module.Name.." is not a modulescript, ignoring...")
         end

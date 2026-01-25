@@ -5,7 +5,7 @@ function State.new(Manager)
         Manager = Manager,
         Name = "amongus"
     }
-    return setmetatable(self, Manager.BaseState)
+    return setmetatable(self, Manager.StateDefaults)
 end
 
 function State:onEnter()

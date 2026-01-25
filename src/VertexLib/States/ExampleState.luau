@@ -3,21 +3,26 @@ local State = {}
 function State.new(Manager)
     local self = {
         Manager = Manager,
-        Name = "amongus"
+        Name = "Idle",
+        onEnter = State.onEnter,
+        onUpdate = State.onUpdate,
+        onExit = State.onExit
     }
     return setmetatable(self, Manager.StateDefaults)
 end
 
-function State:onEnter()
+function State:onEnter(dt)
+    print('Hi')
+    return true
+end
+
+function State:onUpdate(dt)
 
 end
 
-function State:onUpdate()
-
-end
-
-function State:onExit()
-
+function State:onExit(dt)
+    print('Hi')
+    return true
 end
 
 return State

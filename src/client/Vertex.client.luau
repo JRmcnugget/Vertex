@@ -14,6 +14,7 @@ local VertexManager = {}
 VertexManager.Config = require(VertexLib.VertexConfig)
 VertexManager.ActiveState = nil
 VertexManager.Player = nil
+VertexManager.AwaitingSignal = false
 VertexManager.States = {}
 VertexManager.Components = {}
 
@@ -35,12 +36,10 @@ VertexManager.StateDefaults.__index = VertexManager.StateDefaults
 
 function VertexManager:Init()
     local plrInstance = game.Players.LocalPlayer
-    if not plrInstance:IsA("Player") then
-        error("Invalid Player instance! Did you parent Vertex improperly?")
-    end
     self.Player = plrInstance
     
     self:loadStates()
+    self:changeState(self.Config.initalState)
     
     self.Player.CharacterAdded:Connect(function(newModel)
         self.Shared.char = newModel
@@ -65,11 +64,40 @@ end
 -- requests VertexManager to switch to a new state, as indicated by the newState variable. 
 -- runs each respective state's onEnter() and onExit(), and will ignore state.interruptable if boolean override is true.
 -- string (stateName), boolean (true/false)
-function VertexManager:changeState(newState, override)
-    --todo
+function VertexManager:changeState(newState, override, dt)
+    print(self)
+    local requestedState = self.States[newState]
+    if requestedState then
+        if requestedState ~= self.ActiveState then
+            if (self.ActiveState == nil or override) or self.ActiveState.interruptable then
+                local previousState = self.ActiveState
+                local prevStateName = (previousState ~= nil and previousState.Name) and previousState.Name or tostring(previousState)
+                task.spawn(function()
+                    print(requestedState)
+                    self.AwaitingSignal = true
+                    if previousState and previousState.onExit then
+                        previousState:onExit(dt)
+                    elseif self.Config.printWarnings then
+                        warn("State "..prevStateName.." does not have onExit")
+                    end
+                    
+                    self.ActiveState = requestedState
+                    local newStateName = requestedState.Name and requestedState.Name or tostring(requestedState)
+                    if requestedState and requestedState.onEnter then
+                        requestedState:onEnter(dt)
+                    elseif self.Config.printWarnings then
+                        warn("State"..newStateName.." does not have onEnter")
+                    end
+                    self.AwaitingSignal = false
+                end)
+            end
+        elseif self.Config.printWarnings then
+            warn("State "..tostring(newState).." is already active!")
+        end
+    elseif self.Config.printWarnings then
+        warn("State "..tostring(newState).." does not exist!")
+    end
 end
-
-
 
 function VertexManager:loadStates()
     local moduleList = VertexManager.Config.stateFolder:GetChildren()

@@ -20,6 +20,7 @@ VertexManager.Components = {}
 
 -- Shared // variables available for ready access across any State or Component
 VertexManager.Shared = {
+    cam = workspace.CurrentCamera,
     char = nil, 
     humanoid = nil,
     humanoidRoot = nil,

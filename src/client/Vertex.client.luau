@@ -153,7 +153,9 @@ function VertexManager:loadComponents()
         if componentInstance.bindableEvents then
             for count, requestedBind in pairs(componentInstance.bindableEvents) do
                 if requestedBind[1] and requestedBind[2] then
-                    print('ja')
+                    for c, i in pairs(requestedBind[2]) do
+                        print(i.EnumType == Enum.KeyCode)
+                    end
                 else
                     error("nein")
                 end

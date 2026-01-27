@@ -18,6 +18,7 @@ VertexManager.AwaitingSignal = false
 VertexManager.States = {}
 VertexManager.Components = {}
 VertexManager.ActiveThreads = {}
+VertexManager.BindedEvents = {}
 
 -- Shared // variables available for ready access across any State or Component
 VertexManager.Shared = {
@@ -117,24 +118,39 @@ function VertexManager:changeState(newState, override, dt)
     end
 end
 
-function VertexManager:loadStates()
-    local moduleList = VertexManager.Config.stateFolder:GetChildren()
-    for count, module in pairs(moduleList) do
-        if module:IsA("ModuleScript") then
-            local stateModule = require(module)
-            local stateInstance = stateModule.new(self)
-            local stateName = stateInstance.Name and stateInstance.Name or module.Name
-            self.States[stateName] = stateInstance
-            print(stateInstance.interruptable)
+function VertexManager:getModules(parent)
+    local modules = {}
+    for count, instance in pairs(parent:GetChildren()) do
+        if instance:IsA("ModuleScript") then
+            table.insert(modules, instance)
         elseif self.Config.printWarnings then
-            warn("Instance "..module.Name.." is not a modulescript, ignoring...")
+            warn("Instance "..instance.Name.." is not a modulescript, ignoring...")
         end
+    end
+    return modules
+end
+
+function VertexManager:loadStates()
+    local moduleList = self:getModules(self.Config.stateFolder)
+    for count, module in pairs(moduleList) do
+        local stateInstance = require(module).new(self)
+        local stateName = stateInstance.Name and stateInstance.Name or module.Name
+        self.States[stateName] = stateInstance
     end
     return true
 end
 
 function VertexManager:loadComponents()
-    --todo
+    local moduleList = self:getModules(self.Config.componentsFolder)
+    for count, module in pairs(moduleList) do
+        local componentInstance = require(module).new(self)
+        local componentName = componentInstance.Name and componentInstance.Name or module.Name
+        self.Components[componentName] = componentInstance
+        for count, componentPart in pairs(componentInstance) do
+            print(type(componentPart))
+        end
+    end
+    return true
 end
 
 function VertexManager:InputHandler()

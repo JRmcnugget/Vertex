@@ -1,10 +1,11 @@
 local State = {}
 State.__index = State
+State.number = 1
 
 function State.new(Manager)
     local self = {
         Manager = Manager,
-        Name = "Idle",
+        Name = "Grounded",
     }
     local stateInstance = setmetatable(State, Manager.StateDefaults)
     return setmetatable(self, stateInstance)
@@ -12,7 +13,6 @@ end
 
 function State:onEnter(dt)
     task.wait(5)
-    print('Hi')
     return true
 end
 

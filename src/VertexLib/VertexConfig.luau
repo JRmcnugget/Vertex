@@ -4,7 +4,7 @@ local VertexConfig = {
     printWarnings = true,
     enableDebugging = false,
     stateFolder = game.ReplicatedStorage.VertexLib:FindFirstChild('States'),
-    componentsFolder = game.ReplicatedStorage.VertexLib:FindFirstChild('Components')
+    componentFolder = game.ReplicatedStorage.VertexLib:FindFirstChild('Components')
 }
 
 return VertexConfig

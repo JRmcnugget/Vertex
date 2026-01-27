@@ -1,22 +1,23 @@
-local Component = {}
-Component.__index = Component
+local component = {}
+component.__index = component
 
-function Component.new(Manager)
+function component.new(Manager)
     local self = {
+        Manager = Manager,
         Name = "MovementComponent",
-        bindableEvents = {
+         bindableEvents = {
             requestJump = {"requestJump", {Enum.KeyCode.Space, Enum.KeyCode.Q}}
         }
     }
-    return setmetatable(self, Component)
+    return setmetatable(self, component)
 end
 
-function Component:onUpdate()
-
+function component:onUpdate()
+    print('awdsa')
 end
 
-function Component:requestJump(inputType)
+function component:requestJump(inputType)
     print('vleh')
 end
 
-return Component
+return component

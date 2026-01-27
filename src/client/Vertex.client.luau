@@ -135,6 +135,7 @@ function VertexManager:loadStates()
     local moduleList = self:getModules(self.Config.stateFolder)
     for count, module in pairs(moduleList) do
         local stateInstance = require(module).new(self)
+        print(stateInstance)
         local stateName = stateInstance.Name and stateInstance.Name or module.Name
         self.States[stateName] = stateInstance
     end
@@ -145,9 +146,9 @@ function VertexManager:loadComponents()
     local moduleList = self:getModules(self.Config.componentFolder)
     for count, module in pairs(moduleList) do
         local componentInstance = require(module).new(self)
+        print(componentInstance)
         local componentName = componentInstance.Name and componentInstance.Name or module.Name
         self.Components[componentName] = componentInstance
-        self.Components[componentName].shouldUpdate = self.componentInstance.onUpdate and self.componentInstance.onUpdate or false
         
         if componentInstance.bindableEvents then
             for count, requestedBind in pairs(componentInstance.bindableEvents) do

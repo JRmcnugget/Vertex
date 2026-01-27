@@ -147,8 +147,16 @@ function VertexManager:loadComponents()
         local componentInstance = require(module).new(self)
         local componentName = componentInstance.Name and componentInstance.Name or module.Name
         self.Components[componentName] = componentInstance
-        for count, componentPart in pairs(componentInstance) do
-            print(type(componentPart))
+        self.Components[componentName].shouldUpdate = self.componentInstance.onUpdate and self.componentInstance.onUpdate or false
+        
+        if componentInstance.bindableEvents then
+            for count, requestedBind in pairs(componentInstance.bindableEvents) do
+                if requestedBind[1] and requestedBind[2] then
+                    print('ja')
+                else
+                    error("nein")
+                end
+            end
         end
     end
     return true

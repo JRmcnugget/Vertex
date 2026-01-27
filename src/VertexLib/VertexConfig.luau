@@ -1,5 +1,5 @@
 local VertexConfig = {
-    initalState = "Idle",
+    initalState = "Grounded",
     RenderPriority = Enum.RenderPriority.Camera.Value + 1,
     printWarnings = true,
     enableDebugging = false,

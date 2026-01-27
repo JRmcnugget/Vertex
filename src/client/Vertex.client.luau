@@ -120,7 +120,8 @@ end
 
 function VertexManager:getModules(parent)
     local modules = {}
-    for count, instance in pairs(parent:GetChildren()) do
+    local instanceList = parent:GetChildren()
+    for count, instance in pairs(instanceList) do
         if instance:IsA("ModuleScript") then
             table.insert(modules, instance)
         elseif self.Config.printWarnings then
@@ -141,7 +142,7 @@ function VertexManager:loadStates()
 end
 
 function VertexManager:loadComponents()
-    local moduleList = self:getModules(self.Config.componentsFolder)
+    local moduleList = self:getModules(self.Config.componentFolder)
     for count, module in pairs(moduleList) do
         local componentInstance = require(module).new(self)
         local componentName = componentInstance.Name and componentInstance.Name or module.Name

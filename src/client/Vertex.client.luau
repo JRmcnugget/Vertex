@@ -17,6 +17,7 @@ VertexManager.Player = nil
 VertexManager.AwaitingSignal = false
 VertexManager.States = {}
 VertexManager.Components = {}
+VertexManager.ActiveThreads = {}
 
 -- Shared // variables available for ready access across any State or Component
 VertexManager.Shared = {
@@ -26,6 +27,7 @@ VertexManager.Shared = {
     humanoidRoot = nil,
     inputDirection = Vector3.new(0,0,0)
 }
+VertexManager.SharedDefault = table.clone(VertexManager.Shared)
 
 -- StateDefaults // base variables and/or capabilites of a state to inheret upon loading. 
 -- Anything written in the state's .new() will override these
@@ -40,41 +42,55 @@ function VertexManager:Init()
     self.Player = plrInstance
     
     self:loadStates()
-    self:changeState(self.Config.initalState)
+    self:loadComponents()
     
     self.Player.CharacterAdded:Connect(function(newModel)
-        self.Shared.char = newModel
-        task.spawn(function()
+        task.spawn(function() -- we dont document the thread here in .ActiveThreads so the thread doesn't kill itself in the process
+            self:Cleanup()
             self:updateCharacter(newModel)
         end)
     end)
 end
 
--- apparently there was something simplier than commit e76fd30, my bad, just overengineered to the max 
+function VertexManager:Cleanup()
+    for count, thread in pairs(self.ActiveThreads) do
+        task.cancel(thread)
+        self.ActiveThreads[thread] = nil
+    end
+    self.ActiveState = nil
+    self.AwaitingSignal = false
+    self:changeState(self.Config.initalState, true)
+    self.Shared = table.clone(self.SharedDefault)
+end
+
+-- queries the new playermodel for necessary components to be referenced within .Shared
+-- add any references as necessary
 function VertexManager:updateCharacter(newModel)
+    self.Shared.char = newModel
     local humanoidInstance = newModel:WaitForChild("Humanoid")
     local humanoidRootInstance = newModel:WaitForChild('HumanoidRootPart')
     self.Shared.humanoid = humanoidInstance
     self.Shared.humanoidRoot = humanoidRootInstance
 end
 
-function VertexManager:Cleanup()
-
-end
-
 -- requests VertexManager to switch to a new state, as indicated by the newState variable. 
 -- runs each respective state's onEnter() and onExit(), and will ignore state.interruptable if boolean override is true.
+-- if a changestate is requested in the middle of another state change, it will interupt the currently ongoing one in favour of the new state
 -- string (stateName), boolean (true/false)
 function VertexManager:changeState(newState, override, dt)
-    print(self)
     local requestedState = self.States[newState]
+    local ActiveChange = self.ActiveThreads["ChangeState"]
+    if ActiveChange then
+        task.cancel(ActiveChange)
+        self.ActiveThreads["ChangeState"] = nil
+        self.AwaitingSignal = false
+    end
     if requestedState then
         if requestedState ~= self.ActiveState then
             if (self.ActiveState == nil or override) or self.ActiveState.interruptable then
                 local previousState = self.ActiveState
                 local prevStateName = (previousState ~= nil and previousState.Name) and previousState.Name or tostring(previousState)
-                task.spawn(function()
-                    print(requestedState)
+                self.ActiveThreads['ChangeState'] = task.spawn(function()
                     self.AwaitingSignal = true
                     if previousState and previousState.onExit then
                         previousState:onExit(dt)
@@ -90,6 +106,7 @@ function VertexManager:changeState(newState, override, dt)
                         warn("State"..newStateName.." does not have onEnter")
                     end
                     self.AwaitingSignal = false
+                    self.ActiveThreads["ChangeState"] = nil
                 end)
             end
         elseif self.Config.printWarnings then
@@ -124,6 +141,7 @@ function VertexManager:InputHandler()
     --todo
 end
 
+-- runs the active state's onUpdate, along with any other components with an onUpdate function
 function VertexManager:update(dt)
     if self.ActiveState ~= nil and not self.AwaitingSignal then
         local StateName = self.ActiveState.Name and self.ActiveState.Name or tostring(self.ActiveState)
@@ -134,8 +152,11 @@ function VertexManager:update(dt)
         end
     end
 end
-runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, function(dt)
-    VertexManager:update(dt)
-end)
 
+-- initalizes Vertex, duh. if vertex no begin vertex no exist, so therefore no worky
 VertexManager:Init()
+
+-- runservice bind
+runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, function(dt)
+    VertexManager:update(dt) 
+end)

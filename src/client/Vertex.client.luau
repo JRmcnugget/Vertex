@@ -152,10 +152,8 @@ function VertexManager:loadComponents()
         
         if componentInstance.bindableEvents then
             for count, requestedBind in pairs(componentInstance.bindableEvents) do
-                local functionName = requestedBind[1]
-                local keybinds = requestedBind[2]
-                if functionName and keybinds then
-                    for c, i in pairs(requestedBind[2]) do
+                if requestedBind.functionName and requestedBind.keybinds then
+                    for c, i in pairs(requestedBind.keybinds) do
                         print(i.EnumType == Enum.KeyCode)
                     end
                 else

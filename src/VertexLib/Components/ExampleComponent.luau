@@ -6,7 +6,7 @@ function component.new(Manager)
         Manager = Manager,
         Name = "MovementComponent",
          bindableEvents = {
-            requestJump = {"requestJump", {Enum.KeyCode.Space, Enum.KeyCode.Q}}
+            {functionName = "requestJump", keybinds = {Enum.KeyCode.Space, Enum.KeyCode.Q}}
         }
     }
     return setmetatable(self, component)

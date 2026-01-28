@@ -80,7 +80,7 @@ end
 function VertexManager:createBind(func, actionName, keycodes, mobileButton)
     local bindedEvent = ContextActionService:BindAction(actionName, function(actionName, inputType, inputObject)
        func(inputType, inputObject)
-    end, mobileButton, keycodes)
+    end, mobileButton, unpack(keycodes))
 
     return bindedEvent
 end
@@ -166,12 +166,11 @@ function VertexManager:loadComponents()
                     for count2, keyCode in pairs(requestedBind.keybinds) do
                        if keyCode.EnumType ~= Enum.KeyCode then
                            error(tostring(keyCode).."is not a valid keycode!")
-                       else 
-                            local requestedEvent = componentInstance[requestedBind.functionName]
-                            if requestedEvent then
-                                self:createBind(requestedEvent, requestedBind.functionName, keyCode, false)
-                            end
                         end
+                    end
+                    local requestedEvent = componentInstance[requestedBind.functionName]
+                    if requestedEvent then
+                        self:createBind(requestedEvent, requestedBind.functionName, requestedBind.keybinds, false)
                     end
                 else
                     error("Arugment invalid for requested bind "..tostring(requestedBind).. "of component"..componentName)

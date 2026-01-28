@@ -172,7 +172,7 @@ function VertexManager:loadComponents()
                     end
                     local requestedEvent = componentInstance[requestedBind.functionName]
                     if requestedEvent then
-                        self:createBind(requestedEvent, requestedBind.functionName, requestedBind.keybinds, false)
+                        self.BindedEvents[requestedBind.functionName] = self:createBind(requestedEvent, requestedBind.functionName, requestedBind.keybinds, false)
                     end
                 else
                     error("Arugment invalid for requested bind "..tostring(requestedBind).. "of component"..componentName)
@@ -183,7 +183,6 @@ function VertexManager:loadComponents()
     return true
 end
 
-
 -- runs the active state's onUpdate, along with any other components with an onUpdate function
 function VertexManager:update(dt)
     if self.ActiveState ~= nil and not self.AwaitingSignal then
@@ -192,6 +191,11 @@ function VertexManager:update(dt)
             self.ActiveState:onUpdate(dt)
         else
             error("State "..StateName.." does not have an onUpdate function!")
+        end
+    end
+    for count, component in pairs(self.Components) do
+        if component.onUpdate then
+            component:onUpdate(dt)
         end
     end
 end

@@ -11,6 +11,7 @@ end
 
 function State:onEnter(dt)
     self.Manager.Shared.controllerManager.ActiveController = self.Manager.Shared.airController
+    print(self)
     return true
 end
 

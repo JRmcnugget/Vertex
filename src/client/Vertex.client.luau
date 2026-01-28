@@ -30,7 +30,7 @@ VertexManager.Shared = {
     humanoidRoot = nil,
     controllerManager = nil,
     groundSensor = nil,
-    aircontroller = nil,
+    airController = nil,
     groundcontroller = nil,
     inputDirection = Vector3.new(0,0,0),
     lookDirection = Vector3.new(0,0,0),
@@ -84,7 +84,7 @@ function VertexManager:updateCharacter(newModel)
     self.Shared.groundSensor = self.Shared.humanoidRoot:WaitForChild('GroundSensor')
     self.Shared.controllerManager = newModel:WaitForChild('ControllerManager')
     self.Shared.groundController = self.Shared.controllerManager:WaitForChild('GroundController')
-    self.Shared.aircontroller = self.Shared.controllerManager:WaitForChild('AirController')
+    self.Shared.airController = self.Shared.controllerManager:WaitForChild('AirController')
 end
 
 -- binds the given function using contextactionservice
@@ -104,6 +104,7 @@ end
 -- if a changestate is requested in the middle of another state change, it will interupt the currently ongoing one in favour of the new state
 -- string (stateName), boolean (true/false)
 function VertexManager:changeState(newState, override, dt)
+    print('called')
     local requestedState = self.States[newState]
     local ActiveChange = self.ActiveThreads["ChangeState"]
 
@@ -115,7 +116,7 @@ function VertexManager:changeState(newState, override, dt)
 
     if requestedState then
         if requestedState ~= self.ActiveState then
-            if (self.ActiveState == nil or override) or not self.ActiveState.interruptable then
+            if (self.ActiveState == nil or override) or self.ActiveState.interruptable then
                 local previousState = self.ActiveState
                 local prevStateName = (previousState ~= nil and previousState.Name) and previousState.Name or tostring(previousState)
                 
@@ -243,3 +244,5 @@ VertexManager:Init()
 runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, function(dt)
     VertexManager:update(dt) 
 end)
+
+print(VertexManager)

@@ -28,6 +28,7 @@ end
 function Component:requestJump(inputType, inputObj)
     if inputType == Enum.UserInputState.Begin then
         self.Manager.Shared.humanoidRoot:ApplyImpulse(self.jumpImpulse)
+        self.Manager:changeState("Airborne", false)
     end
 end
 

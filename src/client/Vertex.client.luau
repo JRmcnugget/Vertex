@@ -207,7 +207,6 @@ function VertexManager:update(dt)
             if updateInterval and componentAccumilate then
                 if componentAccumilate < updateInterval then
                     component.accumulator = componentAccumilate
-                    return
                 else
                     component:onUpdate(dt)
                     component.accumulator = 0

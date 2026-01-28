@@ -1,6 +1,5 @@
 local State = {}
 State.__index = State
-State.number = 1
 
 function State.new(Manager)
     local self = {

@@ -6,7 +6,7 @@ function component.new(Manager)
         Manager = Manager,
         Name = "MovementComponent",
          bindableEvents = {
-            {functionName = "requestJump", keybinds = {Enum.KeyCode.Space, Enum.KeyCode.Q}}
+            ["Jump"] = {functionName = "requestJump", keybinds = {Enum.KeyCode.Space, Enum.KeyCode.Q}, mobileButton = true}
         }
     }
     return setmetatable(self, component)
@@ -17,7 +17,7 @@ function component:onUpdate()
 end
 
 function component:requestJump(inputType)
-    print('vleh')
+    print('vleh', inputType)
 end
 
 return component

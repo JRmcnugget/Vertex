@@ -2,7 +2,7 @@
 -- by JRmcnugget
 
 --Roblox Services
-local userInputService = game:GetService("UserInputService")
+local ContextActionService = game:GetService("ContextActionService")
 local runService = game:GetService("RunService")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local VertexLib = replicatedStorage:WaitForChild('VertexLib')
@@ -53,6 +53,7 @@ function VertexManager:Init()
     end)
 end
 
+-- kills all running threads to prevent possible desync issues, and resets all variables
 function VertexManager:Cleanup()
     for count, thread in pairs(self.ActiveThreads) do
         task.cancel(thread)
@@ -72,6 +73,16 @@ function VertexManager:updateCharacter(newModel)
     local humanoidRootInstance = newModel:WaitForChild('HumanoidRootPart')
     self.Shared.humanoid = humanoidInstance
     self.Shared.humanoidRoot = humanoidRootInstance
+end
+
+-- binds the given function using contextactionservice, and stores a reference to it for future reference
+-- function, string, array, boolean
+function VertexManager:createBind(func, actionName, keycodes, mobileButton)
+    local bindedEvent = ContextActionService:BindAction(actionName, function(actionName, inputType, inputObject)
+       func(inputType, inputObject)
+    end, mobileButton, keycodes)
+
+    return bindedEvent
 end
 
 -- requests VertexManager to switch to a new state, as indicated by the newState variable. 
@@ -146,18 +157,24 @@ function VertexManager:loadComponents()
     local moduleList = self:getModules(self.Config.componentFolder)
     for count, module in pairs(moduleList) do
         local componentInstance = require(module).new(self)
-        print(componentInstance)
         local componentName = componentInstance.Name and componentInstance.Name or module.Name
         self.Components[componentName] = componentInstance
         
         if componentInstance.bindableEvents then
             for count, requestedBind in pairs(componentInstance.bindableEvents) do
-                if requestedBind.functionName and requestedBind.keybinds then
-                    for c, i in pairs(requestedBind.keybinds) do
-                        print(i.EnumType == Enum.KeyCode)
+                if (requestedBind.functionName and type(requestedBind.functionName) == "string") and requestedBind.keybinds then
+                    for count2, keyCode in pairs(requestedBind.keybinds) do
+                       if keyCode.EnumType ~= Enum.KeyCode then
+                           error(tostring(keyCode).."is not a valid keycode!")
+                       else 
+                            local requestedEvent = componentInstance[requestedBind.functionName]
+                            if requestedEvent then
+                                self:createBind(requestedEvent, requestedBind.functionName, keyCode, false)
+                            end
+                        end
                     end
                 else
-                    error("nein")
+                    error("Arugment invalid for requested bind "..tostring(requestedBind).. "of component"..componentName)
                 end
             end
         end
@@ -165,9 +182,6 @@ function VertexManager:loadComponents()
     return true
 end
 
-function VertexManager:InputHandler()
-    --todo
-end
 
 -- runs the active state's onUpdate, along with any other components with an onUpdate function
 function VertexManager:update(dt)

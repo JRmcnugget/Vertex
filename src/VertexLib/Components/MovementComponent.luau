@@ -23,15 +23,22 @@ function Component:onUpdate()
     else
         self.Manager.Shared.lookDirection = moveDir
     end
-    if self.Manager.Shared.groundSensor.SensedPart and self.Manager.ActiveState.Name ~= "Grounded" then
-        self.Manager:changeState("Grounded", false)
+    if self.Manager.Shared.groundSensor.SensedPart then
+        if self.Manager.ActiveState.Name ~= "Grounded" then
+            self.Manager:changeState("Grounded", false)
+            self.Manager.Shared.numJumps = 0
+        end
+    elseif self.Manager.ActiveState.Name ~= "Airborne" then
+        self.Manager:changeState("Airborne", false)
     end
 end
 
 function Component:requestJump(inputType, inputObj)
-    if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canJump then
+    if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canJump and self.Manager.Shared.numJumps < 2 then
+        local vel = self.Manager.Shared.humanoidRoot.AssemblyLinearVelocity
+        self.Manager.Shared.humanoidRoot.AssemblyLinearVelocity = Vector3.new(vel.X, 0, vel.Z)
         self.Manager.Shared.humanoidRoot:ApplyImpulse(self.jumpImpulse)
-        self.Manager:changeState("Airborne", false)
+        self.Manager.Shared.numJumps += 1
     end
 end
 

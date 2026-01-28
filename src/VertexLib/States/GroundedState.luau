@@ -13,7 +13,8 @@ end
 
 function State:onEnter(dt)
     self.Manager.Shared.controllerManager.ActiveController = self.Manager.Shared.groundController
-    task.wait(0.2)
+    local vel = self.Manager.Shared.humanoidRoot.AssemblyLinearVelocity
+    self.Manager.Shared.humanoidRoot.AssemblyLinearVelocity = Vector3.new(vel.X, 0, vel.Z)
     return true
 end
 

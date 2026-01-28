@@ -34,7 +34,8 @@ VertexManager.Shared = {
     groundcontroller = nil,
     inputDirection = Vector3.new(0,0,0),
     lookDirection = Vector3.new(0,0,0),
-    isCrouched = false
+    isCrouched = false,
+    numJumps = 0
 }
 VertexManager.SharedDefault = table.clone(VertexManager.Shared)
 

@@ -7,7 +7,7 @@ function State.new(Manager)
         Name = "Grounded",
     }
     local stateInstance = setmetatable(State, Manager.StateDefaults)
-    return setmetatable(self, stateInstance)
+    return self
 end
 
 function State:onEnter(dt)

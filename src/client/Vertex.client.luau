@@ -154,8 +154,10 @@ end
 function VertexManager:loadStates()
     local moduleList = self:getModules(self.Config.stateFolder)
     for count, module in pairs(moduleList) do
-        local stateInstance = require(module).new(self)
-        print(stateInstance)
+        local stateModule = require(module)
+        local stateMeta = setmetatable(stateModule, self.StateDefaults)
+        local stateInstance = stateModule.new(self)
+        stateInstance = setmetatable(stateInstance, stateMeta)
         local stateName = stateInstance.Name and stateInstance.Name or module.Name
         self.States[stateName] = stateInstance
     end

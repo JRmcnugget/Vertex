@@ -75,11 +75,13 @@ function VertexManager:updateCharacter(newModel)
     self.Shared.humanoidRoot = humanoidRootInstance
 end
 
--- binds the given function using contextactionservice, and stores a reference to it for future reference
+-- binds the given function using contextactionservice
 -- function, string, array, boolean
 function VertexManager:createBind(func, actionName, keycodes, mobileButton)
-    local bindedEvent = ContextActionService:BindAction(actionName, function(actionName, inputType, inputObject)
-       func(inputType, inputObject)
+    local bindedEvent = ContextActionService:BindAction(actionName, function(actionName, inputType, inputObj)
+        if inputType == Enum.UserInputState.Begin or inputType == Enum.UserInputState.End then
+           func(self, inputType, inputObj) -- function expects a self value as the first variable so we must pass it to it
+        end
     end, mobileButton, unpack(keycodes))
 
     return bindedEvent
@@ -170,7 +172,7 @@ function VertexManager:loadComponents()
                     end
                     local requestedEvent = componentInstance[requestedBind.functionName]
                     if requestedEvent then
-                        self:createBind(requestedEvent, requestedBind.functionName, requestedBind.keybinds, false)
+                        self:createBind(requestedEvent, componentInstance, requestedBind.functionName, requestedBind.keybinds, false)
                     end
                 else
                     error("Arugment invalid for requested bind "..tostring(requestedBind).. "of component"..componentName)

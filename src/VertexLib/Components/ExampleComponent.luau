@@ -16,8 +16,9 @@ function component:onUpdate()
     print('awdsa')
 end
 
-function component:requestJump(inputType)
-    print('vleh', inputType)
+function component:requestJump(a,b,c)
+    print(a)
+    print(self)
 end
 
 return component

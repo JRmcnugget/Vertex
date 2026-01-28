@@ -4,14 +4,13 @@ State.__index = State
 function State.new(Manager)
     local self = {
         Manager = Manager,
-        Name = "Grounded",
+        Name = "Airborne",
     }
     return self
 end
 
 function State:onEnter(dt)
-    self.Manager.Shared.controllerManager.ActiveController = self.Manager.Shared.groundController
-    task.wait(0.2)
+    self.Manager.Shared.controllerManager.ActiveController = self.Manager.Shared.airController
     return true
 end
 

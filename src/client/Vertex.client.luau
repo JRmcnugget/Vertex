@@ -126,7 +126,7 @@ function VertexManager:changeState(newState, override, dt)
                     self.AwaitingSignal = true
                     if previousState and previousState.onExit then
                         previousState:onExit(dt)
-                    elseif self.Config.printWarnings then
+                    elseif self.Config.printWarnings and self.ActiveState ~= nil then
                         warn("State "..prevStateName.." does not have onExit")
                     end
                     

@@ -1,31 +1,26 @@
 local Component = {}
 Component.__index = Component
 
+-- returns the components's local variables as identified in self. if updateFrequency ~= nil, Component.accumlator is required
 function Component.new(Manager)
     local self = {
         Manager = Manager,
-        Name = "MovementComponent",
-        updateFrequency = 30,
+        Name = "ExampleComponent",
+        updateFrequency = nil,
         accumulator = 0,
         bindableEvents = {
-            ["Jump"] = {functionName = "requestJump", keybinds = {Enum.KeyCode.Space, Enum.KeyCode.Q}, mobileButton = true}
+            ["Example"] = {functionName = "exampleEvent", keybinds = {Enum.KeyCode.Q}, mobileButton = false}
         }
     }
     return self
 end
 
 function Component:onUpdate()
-    local moveDir = self.Manager.Shared.humanoid.MoveDirection
-    self.Manager.Shared.inputDirection = moveDir
-    if self.Manager.Shared.char.Hitbox.LocalTransparencyModifier == 1 then
-        self.Manager.Shared.lookDirection = self.Manager.Shared.cam.CFrame.LookVector
-    else
-        self.Manager.Shared.lookDirection = moveDir
-    end
+    
 end
 
-function Component:requestJump(inputType, inputObj)
-    print(self)
+function Component:exampleEvent(inputType, inputObj)
+    
 end
 
 return Component

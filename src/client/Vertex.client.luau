@@ -36,7 +36,7 @@ VertexManager.SharedDefault = table.clone(VertexManager.Shared)
 -- StateDefaults // base variables and/or capabilites of a state to inheret upon loading. 
 -- Anything written in the state's .new() will override these
 VertexManager.StateDefaults = {
-    interruptable = false,
+    interruptable = true,
     isEpic = false
 }
 VertexManager.StateDefaults.__index = VertexManager.StateDefaults
@@ -106,7 +106,7 @@ function VertexManager:changeState(newState, override, dt)
 
     if requestedState then
         if requestedState ~= self.ActiveState then
-            if (self.ActiveState == nil or override) or self.ActiveState.interruptable then
+            if (self.ActiveState == nil or override) or not self.ActiveState.interruptable then
                 local previousState = self.ActiveState
                 local prevStateName = (previousState ~= nil and previousState.Name) and previousState.Name or tostring(previousState)
                 

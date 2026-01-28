@@ -172,7 +172,7 @@ function VertexManager:loadComponents()
                     end
                     local requestedEvent = componentInstance[requestedBind.functionName]
                     if requestedEvent then
-                        self:createBind(requestedEvent, componentInstance, requestedBind.functionName, requestedBind.keybinds, false)
+                        self:createBind(requestedEvent, requestedBind.functionName, requestedBind.keybinds, false)
                     end
                 else
                     error("Arugment invalid for requested bind "..tostring(requestedBind).. "of component"..componentName)

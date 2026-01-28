@@ -22,11 +22,14 @@ VertexManager.BindedEvents = {}
 
 -- Shared // variables available for ready access across any State or Component
 VertexManager.Shared = {
+    isDead = false,
     cam = workspace.CurrentCamera,
     char = nil, 
     humanoid = nil,
     humanoidRoot = nil,
-    inputDirection = Vector3.new(0,0,0)
+    inputDirection = Vector3.new(0,0,0),
+    lookDirection = Vector3.new(0,0,0),
+    isCrouched = false
 }
 VertexManager.SharedDefault = table.clone(VertexManager.Shared)
 
@@ -94,16 +97,19 @@ end
 function VertexManager:changeState(newState, override, dt)
     local requestedState = self.States[newState]
     local ActiveChange = self.ActiveThreads["ChangeState"]
+
     if ActiveChange then
         task.cancel(ActiveChange)
         self.ActiveThreads["ChangeState"] = nil
         self.AwaitingSignal = false
     end
+
     if requestedState then
         if requestedState ~= self.ActiveState then
             if (self.ActiveState == nil or override) or self.ActiveState.interruptable then
                 local previousState = self.ActiveState
                 local prevStateName = (previousState ~= nil and previousState.Name) and previousState.Name or tostring(previousState)
+                
                 self.ActiveThreads['ChangeState'] = task.spawn(function()
                     self.AwaitingSignal = true
                     if previousState and previousState.onExit then
@@ -122,6 +128,7 @@ function VertexManager:changeState(newState, override, dt)
                     self.AwaitingSignal = false
                     self.ActiveThreads["ChangeState"] = nil
                 end)
+
             end
         elseif self.Config.printWarnings then
             warn("State "..tostring(newState).." is already active!")
@@ -195,7 +202,19 @@ function VertexManager:update(dt)
     end
     for count, component in pairs(self.Components) do
         if component.onUpdate then
-            component:onUpdate(dt)
+            local updateInterval = component.updateFrequency and 1/component.updateFrequency or nil
+            local componentAccumilate = component.accumulator + dt
+            if updateInterval and componentAccumilate then
+                if componentAccumilate < updateInterval then
+                    component.accumulator = componentAccumilate
+                    return
+                else
+                    component:onUpdate(dt)
+                    component.accumulator = 0
+                end
+            else
+                component:onUpdate(dt)
+            end
         end
     end
 end

@@ -29,6 +29,9 @@ VertexManager.Shared = {
     humanoid = nil,
     humanoidRoot = nil,
     controllerManager = nil,
+    groundSensor = nil,
+    aircontroller = nil,
+    groundcontroller = nil,
     inputDirection = Vector3.new(0,0,0),
     lookDirection = Vector3.new(0,0,0),
     isCrouched = false
@@ -54,7 +57,8 @@ function VertexManager:Init()
         task.spawn(function() -- we dont document the thread here in .ActiveThreads so the thread doesn't kill itself in the process
             VertexManager.InCleanup = true
             self:Cleanup()
-            self:updateCharacter(newModel)
+            self:updateCharacter(newModel) 
+            self:changeState(self.Config.initalState, true)
             VertexManager.InCleanup = false
         end)
     end)
@@ -68,7 +72,6 @@ function VertexManager:Cleanup()
     end
     self.ActiveState = nil
     self.AwaitingSignal = false
-    self:changeState(self.Config.initalState, true)
     self.Shared = table.clone(self.SharedDefault)
 end
 
@@ -78,7 +81,10 @@ function VertexManager:updateCharacter(newModel)
     self.Shared.char = newModel
     self.Shared.humanoid = newModel:WaitForChild("Humanoid")
     self.Shared.humanoidRoot = newModel:WaitForChild('HumanoidRootPart')
+    self.Shared.groundSensor = self.Shared.humanoidRoot:WaitForChild('GroundSensor')
     self.Shared.controllerManager = newModel:WaitForChild('ControllerManager')
+    self.Shared.groundController = self.Shared.controllerManager:WaitForChild('GroundController')
+    self.Shared.aircontroller = self.Shared.controllerManager:WaitForChild('AirController')
 end
 
 -- binds the given function using contextactionservice

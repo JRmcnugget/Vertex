@@ -1,4 +1,4 @@
---Vertex v0.03
+--Vertex v0.06
 -- by JRmcnugget
 
 --Roblox Services
@@ -55,7 +55,7 @@ function VertexManager:Init()
             VertexManager.InCleanup = true
             self:Cleanup()
             self:updateCharacter(newModel)
-             VertexManager.InCleanup = false
+            VertexManager.InCleanup = false
         end)
     end)
 end
@@ -141,6 +141,7 @@ function VertexManager:changeState(newState, override, dt)
     end
 end
 
+-- helper function to remove redundant code, and gather all valid modules
 function VertexManager:getModules(parent)
     local modules = {}
     local instanceList = parent:GetChildren()
@@ -154,6 +155,7 @@ function VertexManager:getModules(parent)
     return modules
 end
 
+-- load all states into VertrexManager.States, and provide metatable inheritance from .StateDefaults
 function VertexManager:loadStates()
     local moduleList = self:getModules(self.Config.stateFolder)
     for count, module in pairs(moduleList) do
@@ -167,10 +169,13 @@ function VertexManager:loadStates()
     return true
 end
 
+-- load components into VertexManager.Components, and binds any functions referenced in the components bindableEvents table
 function VertexManager:loadComponents()
     local moduleList = self:getModules(self.Config.componentFolder)
     for count, module in pairs(moduleList) do
-        local componentInstance = require(module).new(self)
+        local componentModule = require(module)
+        local componentInstance = componentModule.new(self)
+        componentInstance = setmetatable(componentInstance, componentModule)
         local componentName = componentInstance.Name and componentInstance.Name or module.Name
         self.Components[componentName] = componentInstance
         

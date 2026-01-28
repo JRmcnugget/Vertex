@@ -11,7 +11,7 @@ function Component.new(Manager)
             ["Jump"] = {functionName = "requestJump", keybinds = {Enum.KeyCode.Space, Enum.KeyCode.Q}, mobileButton = true}
         }
     }
-    return setmetatable(self, Component)
+    return self
 end
 
 function Component:onUpdate()

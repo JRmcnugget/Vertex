@@ -6,7 +6,6 @@ function State.new(Manager)
         Manager = Manager,
         Name = "Grounded",
     }
-    local stateInstance = setmetatable(State, Manager.StateDefaults)
     return self
 end
 
@@ -21,7 +20,7 @@ function State:onUpdate(dt)
 end
 
 function State:onExit(dt)
-    print('Hi')
+    print('StateLeft')
     return true
 end
 

@@ -15,6 +15,7 @@ VertexManager.Config = require(VertexLib.VertexConfig)
 VertexManager.ActiveState = nil
 VertexManager.Player = nil
 VertexManager.AwaitingSignal = false
+VertexManager.InCleanup = true
 VertexManager.States = {}
 VertexManager.Components = {}
 VertexManager.ActiveThreads = {}
@@ -51,8 +52,10 @@ function VertexManager:Init()
     
     self.Player.CharacterAdded:Connect(function(newModel)
         task.spawn(function() -- we dont document the thread here in .ActiveThreads so the thread doesn't kill itself in the process
+            VertexManager.InCleanup = true
             self:Cleanup()
             self:updateCharacter(newModel)
+             VertexManager.InCleanup = false
         end)
     end)
 end
@@ -194,27 +197,29 @@ end
 
 -- runs the active state's onUpdate, along with any other components with an onUpdate function
 function VertexManager:update(dt)
-    if self.ActiveState ~= nil and not self.AwaitingSignal then
-        local StateName = self.ActiveState.Name and self.ActiveState.Name or tostring(self.ActiveState)
-        if self.ActiveState.onUpdate then
-            self.ActiveState:onUpdate(dt)
-        else
-            error("State "..StateName.." does not have an onUpdate function!")
+    if not self.InCleanup then
+        if self.ActiveState ~= nil and not self.AwaitingSignal then
+            local StateName = self.ActiveState.Name and self.ActiveState.Name or tostring(self.ActiveState)
+            if self.ActiveState.onUpdate then
+                self.ActiveState:onUpdate(dt)
+            else
+                error("State "..StateName.." does not have an onUpdate function!")
+            end
         end
-    end
-    for count, component in pairs(self.Components) do
-        if component.onUpdate then
-            local updateInterval = component.updateFrequency and 1/component.updateFrequency or nil
-            local componentAccumilate = component.accumulator + dt
-            if updateInterval and componentAccumilate then
-                if componentAccumilate < updateInterval then
-                    component.accumulator = componentAccumilate
+        for count, component in pairs(self.Components) do
+            if component.onUpdate then
+                local updateInterval = component.updateFrequency and 1/component.updateFrequency or nil
+                local componentAccumilate = component.accumulator + dt
+                if updateInterval and componentAccumilate then
+                    if componentAccumilate < updateInterval then
+                        component.accumulator = componentAccumilate
+                    else
+                        component:onUpdate(dt)
+                        component.accumulator = 0
+                    end
                 else
                     component:onUpdate(dt)
-                    component.accumulator = 0
                 end
-            else
-                component:onUpdate(dt)
             end
         end
     end

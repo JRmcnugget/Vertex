@@ -42,7 +42,9 @@ VertexManager.SharedDefault = table.clone(VertexManager.Shared)
 -- Anything written in the state's .new() will override these
 VertexManager.StateDefaults = {
     interruptable = true,
-    isEpic = false
+    isEpic = false,
+    canJump = false,
+    canCrouch = false
 }
 VertexManager.StateDefaults.__index = VertexManager.StateDefaults
 
@@ -104,7 +106,6 @@ end
 -- if a changestate is requested in the middle of another state change, it will interupt the currently ongoing one in favour of the new state
 -- string (stateName), boolean (true/false)
 function VertexManager:changeState(newState, override, dt)
-    print('called')
     local requestedState = self.States[newState]
     local ActiveChange = self.ActiveThreads["ChangeState"]
 
@@ -244,5 +245,3 @@ VertexManager:Init()
 runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, function(dt)
     VertexManager:update(dt) 
 end)
-
-print(VertexManager)

@@ -23,10 +23,13 @@ function Component:onUpdate()
     else
         self.Manager.Shared.lookDirection = moveDir
     end
+    if self.Manager.Shared.groundSensor.SensedPart and self.Manager.ActiveState.Name ~= "Grounded" then
+        self.Manager:changeState("Grounded", false)
+    end
 end
 
 function Component:requestJump(inputType, inputObj)
-    if inputType == Enum.UserInputState.Begin then
+    if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canJump then
         self.Manager.Shared.humanoidRoot:ApplyImpulse(self.jumpImpulse)
         self.Manager:changeState("Airborne", false)
     end

@@ -5,6 +5,8 @@ function State.new(Manager)
     local self = {
         Manager = Manager,
         Name = "Grounded",
+        canJump = true,
+        canCrouch = true
     }
     return self
 end
@@ -21,7 +23,6 @@ function State:onUpdate(dt)
 end
 
 function State:onExit(dt)
-    print('StateLeft')
     return true
 end
 

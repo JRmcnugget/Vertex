@@ -5,13 +5,14 @@ function State.new(Manager)
     local self = {
         Manager = Manager,
         Name = "Airborne",
+        canJump = true,
+        canCrouch = false
     }
     return self
 end
 
 function State:onEnter(dt)
     self.Manager.Shared.controllerManager.ActiveController = self.Manager.Shared.airController
-    print(self)
     return true
 end
 
@@ -21,7 +22,6 @@ function State:onUpdate(dt)
 end
 
 function State:onExit(dt)
-    print('StateLeft')
     return true
 end
 

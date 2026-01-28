@@ -25,7 +25,7 @@ function Component:onUpdate()
 end
 
 function Component:requestJump(inputType, inputObj)
-    
+    print(self)
 end
 
 return Component

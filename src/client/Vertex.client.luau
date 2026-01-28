@@ -27,6 +27,7 @@ VertexManager.Shared = {
     char = nil, 
     humanoid = nil,
     humanoidRoot = nil,
+    controllerManager = nil,
     inputDirection = Vector3.new(0,0,0),
     lookDirection = Vector3.new(0,0,0),
     isCrouched = false
@@ -72,10 +73,9 @@ end
 -- add any references as necessary
 function VertexManager:updateCharacter(newModel)
     self.Shared.char = newModel
-    local humanoidInstance = newModel:WaitForChild("Humanoid")
-    local humanoidRootInstance = newModel:WaitForChild('HumanoidRootPart')
-    self.Shared.humanoid = humanoidInstance
-    self.Shared.humanoidRoot = humanoidRootInstance
+    self.Shared.humanoid = newModel:WaitForChild("Humanoid")
+    self.Shared.humanoidRoot = newModel:WaitForChild('HumanoidRootPart')
+    self.Shared.controllerManager = newModel:WaitForChild('ControllerManager')
 end
 
 -- binds the given function using contextactionservice

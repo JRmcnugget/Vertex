@@ -15,7 +15,13 @@ function Component.new(Manager)
 end
 
 function Component:onUpdate()
-    print('a')
+    local moveDir = self.Manager.Shared.humanoid.MoveDirection
+    self.Manager.Shared.inputDirection = moveDir
+    if self.Manager.Shared.char.Hitbox.LocalTransparencyModifier == 1 then
+        self.Manager.Shared.lookDirection = self.Manager.Shared.cam.CFrame.LookVector
+    else
+        self.Manager.Shared.lookDirection = moveDir
+    end
 end
 
 function Component:requestJump(inputType, inputObj)

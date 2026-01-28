@@ -16,8 +16,8 @@ function State:onEnter(dt)
 end
 
 function State:onUpdate(dt)
-    self.Manager.Shared.char.ControllerManager.MovingDirection = self.Manager.Shared.humanoid.MoveDirection
-    self.Manager.Shared.char.ControllerManager.FacingDirection = self.Manager.Shared.cam.CFrame.LookVector
+    self.Manager.Shared.controllerManager.MovingDirection = self.Manager.Shared.inputDirection
+    self.Manager.Shared.controllerManager.FacingDirection = self.Manager.Shared.lookDirection
 end
 
 function State:onExit(dt)

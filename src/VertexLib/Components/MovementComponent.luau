@@ -49,10 +49,12 @@ function Component:requestCrouch(inputType, inputObj)
     if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canCrouch and not self.Manager.Shared.isCrouched then
         self.Manager.Shared.hitbox.Size = self.Manager.Shared.hitboxSizeCrouched
         self.Manager.Shared.isCrouched = true
+        self.Manager.Shared.controllerManager.BaseMoveSpeed = self.Manager.Shared.crouchSpeed
         self.Manager.Shared.groundController.GroundOffset = self.Manager.Shared.groundOffsetCrouched
         self.Manager.Shared.groundSensor.SearchDistance = self.Manager.Shared.groundOffsetCrouched + self.Manager.Shared.safeCheckOffset
     elseif inputType == Enum.UserInputState.End and self.Manager.Shared.isCrouched then
         self.Manager.Shared.hitbox.Size = self.Manager.Shared.hitboxSize
+        self.Manager.Shared.controllerManager.BaseMoveSpeed = self.Manager.Shared.walkSpeed
         self.Manager.Shared.groundController.GroundOffset = self.Manager.Shared.groundOffset
         self.Manager.Shared.groundSensor.SearchDistance = self.Manager.Shared.groundOffset + self.Manager.Shared.safeCheckOffset
         self.Manager.Shared.isCrouched = false

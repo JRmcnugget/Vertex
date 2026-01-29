@@ -42,6 +42,8 @@ VertexManager.Shared = {
     groundOffset = 3,
     groundOffsetCrouched = 1,
     safeCheckOffset = 0.3,
+    walkSpeed = 25,
+    crouchSpeed = 16,
     numJumps = 0,
     hello = false
 }

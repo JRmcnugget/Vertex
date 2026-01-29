@@ -57,7 +57,7 @@ function Component:requestCrouch(inputType, inputObj)
         self.Manager.Shared.groundSensor.SearchDistance = self.Manager.Shared.groundOffset + self.Manager.Shared.safeCheckOffset
         self.Manager.Shared.isCrouched = false
     end
-    local offset = self.Manager.isCrouched and self.Manager.Shared.hitboxOffsetCrouched or self.Manager.Shared.hitboxOffset
+    local offset = self.Manager.Shared.isCrouched and self.Manager.Shared.hitboxOffsetCrouched or self.Manager.Shared.hitboxOffset
     self.Manager.Shared.humanoidRoot.HitboxWeld.C0 = offset.C0
     self.Manager.Shared.humanoidRoot.HitboxWeld.C0 = offset.C1
 end

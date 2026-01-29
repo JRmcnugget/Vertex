@@ -15,10 +15,10 @@ VertexManager.Config = require(VertexLib.VertexConfig)
 VertexManager.ActiveState = nil
 VertexManager.Player = nil
 VertexManager.AwaitingSignal = false
-VertexManager.InCleanup = true
 VertexManager.States = {}
 VertexManager.Components = {}
 VertexManager.ActiveThreads = {}
+VertexManager.CleanupThread = "None"
 VertexManager.BindedEvents = {}
 
 -- Shared // variables available for ready access across any State or Component
@@ -65,12 +65,11 @@ function VertexManager:Init()
     self:loadComponents()
     
     self.Player.CharacterAdded:Connect(function(newModel)
-        task.spawn(function() -- we dont document the thread here in .ActiveThreads so the thread doesn't kill itself in the process
-            VertexManager.InCleanup = true
+        self.CleanupThread = task.defer(function() -- task.defer must be used here to prevent instability with renderstep and thread desyncs
             self:Cleanup()
             self:updateCharacter(newModel) 
             self:changeState(self.Config.initalState, true)
-            VertexManager.InCleanup = false
+            self.CleanupThread = nil
         end)
     end)
 end
@@ -98,6 +97,7 @@ function VertexManager:updateCharacter(newModel)
     self.Shared.groundController = self.Shared.controllerManager:WaitForChild('GroundController')
     self.Shared.airController = self.Shared.controllerManager:WaitForChild('AirController')
     self.Shared.respawnService = replicatedStorage:WaitForChild('RespawnService')
+    return true
 end
 
 -- binds the given function using contextactionservice
@@ -221,29 +221,31 @@ end
 
 -- runs the active state's onUpdate, along with any other components with an onUpdate function
 function VertexManager:update(dt)
-    if not self.InCleanup and self.ActiveState ~= nil then
-        if self.ActiveState ~= nil and not self.AwaitingSignal then
-            local StateName = self.ActiveState.Name and self.ActiveState.Name or tostring(self.ActiveState)
-            if self.ActiveState.onUpdate then
-                self.ActiveState:onUpdate(dt)
-            else
-                error("State "..StateName.." does not have an onUpdate function!")
-            end
+    if (self.CleanupThread) or self.ActiveState == nil then 
+        return 
+    end
+
+    if not self.AwaitingSignal then
+        local StateName = self.ActiveState.Name and self.ActiveState.Name or tostring(self.ActiveState)
+        if self.ActiveState.onUpdate then
+            self.ActiveState:onUpdate(dt)
+        else
+            error("State "..StateName.." does not have an onUpdate function!")
         end
-        for count, component in pairs(self.Components) do
-            if component.onUpdate then
-                local updateInterval = component.updateFrequency and 1/component.updateFrequency or nil
-                local componentAccumilate = component.accumulator + dt
-                if updateInterval and componentAccumilate then
-                    if componentAccumilate < updateInterval then
-                        component.accumulator = componentAccumilate
-                    else
-                        component:onUpdate(dt)
-                        component.accumulator = 0
-                    end
+    end
+    for count, component in pairs(self.Components) do
+        if component.onUpdate then
+            local updateInterval = component.updateFrequency and 1/component.updateFrequency or nil
+            local componentAccumilate = component.accumulator + dt
+            if updateInterval and componentAccumilate then
+                if componentAccumilate < updateInterval then
+                    component.accumulator = componentAccumilate
                 else
                     component:onUpdate(dt)
+                    component.accumulator = 0
                 end
+            else
+                component:onUpdate(dt)
             end
         end
     end

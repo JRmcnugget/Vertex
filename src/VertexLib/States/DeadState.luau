@@ -20,6 +20,7 @@ end
 function State:onUpdate(dt)
     self.accumlator += dt
     if self.accumlator > 2 then
+        self.accumlator = 0
         self.Manager.Shared.respawnService:InvokeServer()
     end
 end

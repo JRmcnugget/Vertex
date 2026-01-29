@@ -23,7 +23,6 @@ VertexManager.BindedEvents = {}
 
 -- Shared // variables available for ready access across any State or Component
 VertexManager.Shared = {
-    isDead = false,
     cam = workspace.CurrentCamera,
     char = nil, 
     humanoid = nil,
@@ -43,7 +42,8 @@ VertexManager.Shared = {
     groundOffset = 3,
     groundOffsetCrouched = 1,
     safeCheckOffset = 0.3,
-    numJumps = 0
+    numJumps = 0,
+    hello = false
 }
 VertexManager.SharedDefault = table.clone(VertexManager.Shared)
 
@@ -97,6 +97,7 @@ function VertexManager:updateCharacter(newModel)
     self.Shared.controllerManager = newModel:WaitForChild('ControllerManager')
     self.Shared.groundController = self.Shared.controllerManager:WaitForChild('GroundController')
     self.Shared.airController = self.Shared.controllerManager:WaitForChild('AirController')
+    self.Shared.respawnService = replicatedStorage:WaitForChild('RespawnService')
 end
 
 -- binds the given function using contextactionservice
@@ -220,7 +221,7 @@ end
 
 -- runs the active state's onUpdate, along with any other components with an onUpdate function
 function VertexManager:update(dt)
-    if not self.InCleanup then
+    if not self.InCleanup and self.ActiveState ~= nil then
         if self.ActiveState ~= nil and not self.AwaitingSignal then
             local StateName = self.ActiveState.Name and self.ActiveState.Name or tostring(self.ActiveState)
             if self.ActiveState.onUpdate then
@@ -255,3 +256,5 @@ VertexManager:Init()
 runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, function(dt)
     VertexManager:update(dt) 
 end)
+
+print(VertexManager)

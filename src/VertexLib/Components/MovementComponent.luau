@@ -5,7 +5,7 @@ function Component.new(Manager)
     local self = {
         Manager = Manager,
         Name = "MovementComponent",
-        updateFrequency = 30,
+        updateFrequency = nil,
         accumulator = 0,
         bindableEvents = {
             ["Jump"] = {functionName = "requestJump", keybinds = {Enum.KeyCode.Space}, mobileButton = true},
@@ -17,20 +17,22 @@ function Component.new(Manager)
 end
 
 function Component:onUpdate()
-    local moveDir = self.Manager.Shared.humanoid.MoveDirection
-    self.Manager.Shared.inputDirection = moveDir
-    if self.Manager.Shared.char.Hitbox.LocalTransparencyModifier == 1 then
-        self.Manager.Shared.lookDirection = self.Manager.Shared.cam.CFrame.LookVector
-    else
-        self.Manager.Shared.lookDirection = moveDir
-    end
-    if self.Manager.Shared.groundSensor.SensedPart then
-        if self.Manager.ActiveState.Name ~= "Grounded" then
-            self.Manager:changeState("Grounded", false)
-            self.Manager.Shared.numJumps = 0
+    if self.Manager.ActiveState.Name ~= "Dead" then
+        local moveDir = self.Manager.Shared.humanoid.MoveDirection
+        self.Manager.Shared.inputDirection = moveDir
+        if self.Manager.Shared.char.Hitbox.LocalTransparencyModifier == 1 then
+            self.Manager.Shared.lookDirection = self.Manager.Shared.cam.CFrame.LookVector
+        else
+            self.Manager.Shared.lookDirection = moveDir
         end
-    elseif self.Manager.ActiveState.Name ~= "Airborne" then
-        self.Manager:changeState("Airborne", false)
+        if self.Manager.Shared.groundSensor.SensedPart then
+            if self.Manager.ActiveState.Name ~= "Grounded" then
+                self.Manager:changeState("Grounded", false)
+                self.Manager.Shared.numJumps = 0
+            end
+        elseif self.Manager.ActiveState.Name ~= "Airborne" then
+            self.Manager:changeState("Airborne", false)
+        end
     end
 end
 

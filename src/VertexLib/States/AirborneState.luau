@@ -6,7 +6,7 @@ function State.new(Manager)
         Manager = Manager,
         Name = "Airborne",
         canJump = true,
-        canCrouch = false
+        canCrouch = true
     }
     return self
 end

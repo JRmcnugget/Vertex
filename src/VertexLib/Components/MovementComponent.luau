@@ -8,7 +8,8 @@ function Component.new(Manager)
         updateFrequency = 30,
         accumulator = 0,
         bindableEvents = {
-            ["Jump"] = {functionName = "requestJump", keybinds = {Enum.KeyCode.Space, Enum.KeyCode.Q}, mobileButton = true}
+            ["Jump"] = {functionName = "requestJump", keybinds = {Enum.KeyCode.Space}, mobileButton = true},
+            ["Crouch"] = {functionName = "requestCrouch", keybinds = {Enum.KeyCode.LeftControl, Enum.KeyCode.C}, mobileButton = true}
         },
         jumpImpulse = Vector3.new(0,250,0)
     }
@@ -40,6 +41,23 @@ function Component:requestJump(inputType, inputObj)
         self.Manager.Shared.humanoidRoot:ApplyImpulse(self.jumpImpulse)
         self.Manager.Shared.numJumps += 1
     end
+end
+
+function Component:requestCrouch(inputType, inputObj)
+    if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canCrouch and not self.Manager.Shared.isCrouched then
+        self.Manager.Shared.hitbox.Size = self.Manager.Shared.hitboxSizeCrouched
+        self.Manager.Shared.isCrouched = true
+        self.Manager.Shared.groundController.GroundOffset = self.Manager.Shared.groundOffsetCrouched
+        self.Manager.Shared.groundSensor.SearchDistance = self.Manager.Shared.groundOffsetCrouched + self.Manager.Shared.safeCheckOffset
+    elseif inputType == Enum.UserInputState.End and self.Manager.Shared.isCrouched then
+        self.Manager.Shared.hitbox.Size = self.Manager.Shared.hitboxSize
+        self.Manager.Shared.groundController.GroundOffset = self.Manager.Shared.groundOffset
+        self.Manager.Shared.groundSensor.SearchDistance = self.Manager.Shared.groundOffset + self.Manager.Shared.safeCheckOffset
+        self.Manager.Shared.isCrouched = false
+    end
+    local offset = self.Manager.isCrouched and self.Manager.Shared.hitboxOffsetCrouched or self.Manager.Shared.hitboxOffset
+    self.Manager.Shared.humanoidRoot.HitboxWeld.C0 = offset.C0
+    self.Manager.Shared.humanoidRoot.HitboxWeld.C0 = offset.C1
 end
 
 return Component

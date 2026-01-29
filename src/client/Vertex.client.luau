@@ -28,6 +28,7 @@ VertexManager.Shared = {
     char = nil, 
     humanoid = nil,
     humanoidRoot = nil,
+    hitbox = nil,
     controllerManager = nil,
     groundSensor = nil,
     airController = nil,
@@ -35,6 +36,13 @@ VertexManager.Shared = {
     inputDirection = Vector3.new(0,0,0),
     lookDirection = Vector3.new(0,0,0),
     isCrouched = false,
+    hitboxSize = Vector3.new(2, 5.944, 2),
+    hitboxSizeCrouched = Vector3.new(2, 3.95, 2),
+    hitboxOffset = {C0 = CFrame.new(0, -1, 0), C1 = CFrame.new(0, -1, 0)},
+    hitboxOffsetCrouched = {C0 = CFrame.new(0, 0.511, 0), C1 = CFrame.new(0, 0.113, 0)},
+    groundOffset = 3,
+    groundOffsetCrouched = 1,
+    safeCheckOffset = 0.3,
     numJumps = 0
 }
 VertexManager.SharedDefault = table.clone(VertexManager.Shared)
@@ -84,6 +92,7 @@ function VertexManager:updateCharacter(newModel)
     self.Shared.char = newModel
     self.Shared.humanoid = newModel:WaitForChild("Humanoid")
     self.Shared.humanoidRoot = newModel:WaitForChild('HumanoidRootPart')
+    self.Shared.hitbox = newModel:WaitForChild('Hitbox')
     self.Shared.groundSensor = self.Shared.humanoidRoot:WaitForChild('GroundSensor')
     self.Shared.controllerManager = newModel:WaitForChild('ControllerManager')
     self.Shared.groundController = self.Shared.controllerManager:WaitForChild('GroundController')

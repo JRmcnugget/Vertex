@@ -59,7 +59,7 @@ function Component:requestCrouch(inputType, inputObj)
     end
     local offset = self.Manager.Shared.isCrouched and self.Manager.Shared.hitboxOffsetCrouched or self.Manager.Shared.hitboxOffset
     self.Manager.Shared.humanoidRoot.HitboxWeld.C0 = offset.C0
-    self.Manager.Shared.humanoidRoot.HitboxWeld.C0 = offset.C1
+    self.Manager.Shared.humanoidRoot.HitboxWeld.C1 = offset.C1
 end
 
 return Component

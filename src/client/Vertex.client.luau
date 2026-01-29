@@ -37,8 +37,8 @@ VertexManager.Shared = {
     isCrouched = false,
     hitboxSize = Vector3.new(2, 5.944, 2),
     hitboxSizeCrouched = Vector3.new(2, 3.95, 2),
-    hitboxOffset = {C0 = CFrame.new(0, -1, 0), C1 = CFrame.new(0, -1, 0)},
-    hitboxOffsetCrouched = {C0 = CFrame.new(0, 0.511, 0), C1 = CFrame.new(0, 0.113, 0)},
+    hitboxOffset = {C0 = CFrame.new(0, -1.35, 0), C1 = CFrame.new(0, -0.324, 0)},
+    hitboxOffsetCrouched = {C0 = CFrame.new(0, 0.111, 0), C1 = CFrame.new(0, 0.113, 0)},
     groundOffset = 3,
     groundOffsetCrouched = 1,
     safeCheckOffset = 0.3,
@@ -258,5 +258,3 @@ VertexManager:Init()
 runService:BindToRenderStep('VertexUpdate', VertexManager.Config.RenderPriority, function(dt)
     VertexManager:update(dt) 
 end)
-
-print(VertexManager)

@@ -410,10 +410,10 @@ Any binded events are referenced in code through this format: ```componentName..
 
   * stateFolder
 
-  specifies where states are to be found. change if necessary
+    specifies where states are to be found. change if necessary
   * componentFolder
 
-  specifies where components are to be found. change if necessary
+    specifies where components are to be found. change if necessary
 
 <hr />
 

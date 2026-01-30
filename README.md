@@ -27,6 +27,12 @@ Vertex will automatically bind any specificed Component functions to their respe
 
 Vertex is designed from the ground up to be transparent with how it functions, enabling developers to modify its contents to better fit there own needs.
 
+
+**Future Plans:**
+* Create PhysicsLib
+* Create VFXCore
+* Create Larger Tech demo
+
 ## Quick Start Guide
 <div align="center">
 For a complete implementation example, including multiple state transitions, use of components, and abilities, explore the Vertex Demo place, uncopylocked on Roblox or available for download in the releases tab.

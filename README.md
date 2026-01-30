@@ -1,7 +1,6 @@
 <div align="center">
-  <h1><strong>Vertex v0.10</strong></h1>
-  <img src="https://img.shields.io/badge/Status-Beta-blue">
-  <img src="src/assets/coolbeanbadge.png" width="25" height="25"> 
+  <h1><strong>Vertex v0.10</strong></h1> <img src="https://img.shields.io/badge/Status-Beta-blue">
+  <img src="src/assets/coolbeanbadge.png" width="50" height="50"> 
   <b>Cool Bean Approved</b>
 </div>
 

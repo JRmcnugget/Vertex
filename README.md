@@ -1,7 +1,6 @@
 <div align="center">
-  <h1><strong>Vertex v0.10</strong></h1> <img src="https://img.shields.io/badge/Status-Beta-blue">
-  <img src="src/assets/coolbeanbadge.png" width="50" height="50"> 
-  <b>Cool Bean Approved</b>
+  <h1><strong>Vertex v0.10</strong> <img src="https://img.shields.io/badge/Status-Beta-blue" width="75" height="75"></h1> 
+  <img src="src/assets/coolbeanbadge.png" width="200" height="200"> 
 </div>
 
 Vertex is a decoupled, state and component driven framework for Roblox player character creation. 

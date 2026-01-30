@@ -16,10 +16,34 @@ Vertex will automatically load any state or component modulescripts, creating in
 
 * **Automatic keybinding**
 
+Gif should go here
+
+Vertex will automatically bind any specificed Component functions to their respective keybinds, removing the jank of individually programming various UserInput connections.
+
 * **Customizable API & architecture**
+
+Vertex is designed from the ground up to be transparent with how it functions, enabling developers to modify its contents to better fit there own needs.
 
 ## Quick Start Guide
 
+* **Installation**
+
+tutorial goes here
+  
+* **Creating a State**
+
+tutorial goes here
+  
+* **Creating a Component**
+
+tutorial goes here
+  
+* **Advanced Functionality**
+
+tutorial goes here
+  
 ## Documentation
+
+<hr />
 
 Built using Rojo

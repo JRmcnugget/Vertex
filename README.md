@@ -10,7 +10,7 @@ It is designed to alleviate the burden of how character scripts intertwine, allo
 ## Features
 * **Dynamic Module Discovery**
 
-Gif should go here
+![Vertex Demo Gif1](src/assets/vertexdemo1.gif)
 
 Vertex will automatically load any state or component modulescripts, creating instant functionality with minimal adjustments to how it works with other scripts. Want to add functionality for running or crouching? Just add a State, Component, or multiple, whichever suits your needs best!
 

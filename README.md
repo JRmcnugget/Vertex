@@ -351,13 +351,69 @@ Any binded events are referenced in code through this format: ```componentName..
     runs upon switching to another state. will yeild State:onUpdate(), preventing the next state's onEnter to begin until returns true
 * Component
   * Component.new(Manager)
+
+    returns the components's local variables as identified in self
   * Component.Manager
+
+    DataType = array
+
+    Links back to VertexManager, allowing access to the Vertex API within a component hook
   * Component.Name
+
+    DataType = string
+    
+    Used as the identifier for the component within code. If not specified, it will default to the file name
   * Component.updateFrequency
+
+    DataType = int
+
+    specifies how often, in times per second, Component:onUpdate() will be called.
   * Component.accumlator
+
+    DataType = number
+    
   * Component.bindableEvents
+
+    DataType = array
+
+    Contains a list of functions to be binded to keybinds
+
+    Follows the format of: [Identifier] = {functionName = string, keybinds = array, mobileButton = boolean}
+
+    Identifier: string
+
+    functionName: string, used to reference component function, case sensitve
+
+    keybinds: array, containing list of KeyCodes
+
+    mobileButton: true or false, identifies whether or not a mobile button should be made
   * Component:onUpdate(dt)
+
+    runs everyframe, unless given a specific update rate by Component.updateFrequency
 * VertexConfig
+  * InitalState
+    
+    DataType = string
+
+    specifies what state the player should begin in after spawning in. case senstive
+  * RenderPriority
+
+    DataType = int
+
+    specifies the render piority to be used for the renderstepped bind
+    
+  * printWarnings
+
+    DataType = boolean
+
+    specifies whether or not Vertex should print warnings
+
+  * stateFolder
+
+  specifies where states are to be found. change if necessary
+  * componentFolder
+
+  specifies where components are to be found. change if necessary
 
 <hr />
 

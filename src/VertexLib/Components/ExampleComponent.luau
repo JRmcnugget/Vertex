@@ -15,7 +15,7 @@ function Component.new(Manager)
     return self
 end
 
-function Component:onUpdate()
+function Component:onUpdate(dt)
     
 end
 

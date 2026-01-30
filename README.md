@@ -221,6 +221,12 @@ Any binded events are referenced in code through this format: ```componentName..
 
     Contains the list of Configs as obtained by the VertexConfig modulescript
 
+  * VertexManager.ActiveState
+ 
+    Datatype = array
+
+    Contains a reference to the currently active state
+
   * VertexManager.Player
 
     DataType = instance
@@ -321,7 +327,36 @@ Any binded events are referenced in code through this format: ```componentName..
 
     runs the active state's onUpdate, along with any other components with an onUpdate function
 * State
+  * State.new(Manager)
+
+    returns the state's local variables as identified in self. will inherit any variables from Vertex.StateDefaults
+  * State.Manager
+
+    DataType = array
+
+    Links back to VertexManager, allowing access to the Vertex API within a state hook
+  * State.Name
+ 
+    DataType = string
+ 
+    Used as the identifier for the state within code. If not specified, it will default to the file name
+  * State:onEnter(dt)
+ 
+    runs upon being switched to from another state. will yeild State:onUpdate() and Manager:changeState() until returns true.
+  * State:onUpdate(dt)
+ 
+    runs every frame while the state is active
+  * State:onExit(dt)
+ 
+    runs upon switching to another state. will yeild State:onUpdate(), preventing the next state's onEnter to begin until returns true
 * Component
+  * Component.new(Manager)
+  * Component.Manager
+  * Component.Name
+  * Component.updateFrequency
+  * Component.accumlator
+  * Component.bindableEvents
+  * Component:onUpdate(dt)
 * VertexConfig
 
 <hr />

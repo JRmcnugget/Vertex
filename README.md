@@ -93,7 +93,7 @@ end
 
 return State
 ```
-Both ```State:onEnter()``` and ```State:onExit()``` are not necessary for a state to function, but it is recommended to leave them blank regardless of their utilization.
+Both ```State:onEnter()``` and ```State:onExit()``` are not necessary for a state to function, but it is recommended to leave them blank regardless of their utilization. ```State.new()``` and ```State:onUpdate()``` are required.
 
 States waiting until ```State:onEnter()``` or ```State:onExit()``` has completed allows developers to utilize asynchronous transitions. If you need to wait for an animation, a sound, or something else to finish before the state officially begins or ends, you can postpone the return utilizing a ```task.wait()```.
 

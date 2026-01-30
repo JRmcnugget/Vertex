@@ -202,12 +202,124 @@ Any binded events are referenced in code through this format: ```componentName..
 
 * By default, Vertex utilizes ContextActionService to bind Component Events. If you have need for an external library to bind functions, you can modify ```VertexManager:createBind()``` for your purposes.
 * Shared variables are within ```VertexManager.Shared```. It is recommened to set any player character variables to ```nil``` and instead utilize ```WaitForChild()``` to update them in ```VertexManager:updateCharacter()```.
+* Vertex clears all spawned tasks upon cleanup, which is necessary to prevent possible desyncs. If you are using ```task.spawn```, ```task.defer```, ```task.delay```, a ```coroutine```, or something similar that utilizes another thread, it is **heavily** recommened to store it within ```VertexManager.ActiveThreads``` to ensure proper cleanup.
 
 <hr />
 
 ## Documentation
 
 * VertexManager
+  * VertexManager
+
+    DataType = array
+
+    The VertexManager itself
+
+  * VertexManager.Config
+
+    DataType = array
+
+    Contains the list of Configs as obtained by the VertexConfig modulescript
+
+  * VertexManager.Player
+
+    DataType = instance
+
+    A reference to the Player instance of the LocalPlayer
+
+  * VertexManager.AwaitingSignal
+
+    DataType = boolean
+
+    Used witin VertexManager:changeState(), yeilding State:onUpdate() until it is false
+
+  * VertexManager.States
+ 
+    DataType = Array
+
+    Contains a reference to each loaded State
+
+  * VertexManager.Components
+ 
+    DataType = Array
+
+    Contains a reference to each loaded Component
+
+  * VertexManager.ActiveThreads
+
+    DataType = Array
+
+    Contains a reference to each currently active thread, which is used to kill any active ones during cleanup to prevent desync issues. If you are utilzing anything that creates another thread, it is imporant to store it within this table
+
+  * VertexManager.CleanupThread
+
+    DataType = thread
+
+    Contains a reference to the thread doing the cleanup in Vertex after VertexManager:Cleanup() has been called
+
+  * VertexManager.BindedEvents
+
+    DataType = Array
+
+    A table containing all binded component events for reference if needed
+    
+  * VertexManager.Shared
+ 
+    DataType = Array
+ 
+    variables available for ready access across any State or Component
+  * VertexManager.SharedDefault
+ 
+    DataType = Array
+ 
+    A clone of VertexManager.Shared, so it may reset to it upon VertexManager:Cleanup() is called
+  * VertexManager.StateDefaults
+
+    base variables and/or capabilites of a state to inheret upon loading
+
+    Anything written in the state's .new() will override these
+  * VertexManager:Init()
+
+    initalizes Vertex for the first time, and sets up a bind to cleanup whenever a new character is added for the player
+  * VertexManager:Cleanup()
+ 
+    kills all running threads to prevent possible desync issues, and resets all variables
+  * VertexManager:updateCharacter(newModel)
+ 
+    Passed Variables: instance
+
+    queries the new playermodel for necessary components to be referenced within .Shared
+  
+    add any references as necessary, utilzing WaitForChild
+  * VertexManager:createBind(func, component, actionName, keycodes, mobileButton)
+  
+    Passed Variables: function, instance, string, array, boolean
+  
+    binds the given function using contextactionservice
+  * VertexManager:changeState(newState, override, dt)
+  
+    Passed Variables: string (stateName), boolean (true/false), number
+  
+    requests VertexManager to switch to a new state, as indicated by the newState variable.
+
+    runs each respective state's onEnter() and onExit(), and will ignore state.interruptable if boolean override is true.
+  
+    if a changestate is requested in the middle of another state change, it will interupt the currently ongoing one in favour of the new state
+  
+  * VertexManager:getModules(parent)
+  
+    Passed Variables: instance
+
+    helper function to remove redundant code, and gather all valid modules
+  * VertexManager:loadStates()
+ 
+    load all states into VertrexManager.States, and provide metatable inheritance from .StateDefaults
+  * VertexManager:loadComponents()
+ 
+    load components into VertexManager.Components, and binds any functions referenced in the components bindableEvents table
+  * VertexManager:update(dt)
+
+    runs the active state's onUpdate, along with any other components with an onUpdate function
 * State
 * Component
 * VertexConfig

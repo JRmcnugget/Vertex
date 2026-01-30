@@ -210,7 +210,7 @@ Any binded events are referenced in code through this format: ```componentName..
 * **Advanced Functionality**
 
 * By default, Vertex utilizes ContextActionService to bind Component Events. If you have need for an external library to bind functions, you can modify ```VertexManager:createBind()``` for your purposes.
-* Shared variables are within ```VertexManager.Shared```. It is recommened to set any player character variables to ```nil``` and instead utilize ```WaitForChild()``` to update them in ```VertexManager:updateCharacter()```.
+* Shared variables are within ```VertexManager.Shared```. It is recommended to set any player character variables to ```nil``` and instead utilize ```WaitForChild()``` to update them in ```VertexManager:updateCharacter()```.
 * Vertex clears all spawned tasks upon cleanup, which is necessary to prevent possible desyncs. If you are using ```task.spawn```, ```task.defer```, ```task.delay```, a ```coroutine```, or something similar that utilizes another thread, it is **heavily** recommened to store it within ```VertexManager.ActiveThreads``` to ensure proper cleanup.
 
 <hr />
@@ -259,7 +259,7 @@ Any binded events are referenced in code through this format: ```componentName..
 
     DataType = Array
 
-    Contains a reference to each currently active thread, which is used to kill any active ones during cleanup to prevent desync issues. If you are utilizing anything that creates another thread, it is imporant to store it within this table
+    Contains a reference to each currently active thread, which is used to kill any active ones during cleanup to prevent desync issues. If you are utilizing anything that creates another thread, it is important to store it within this table
 
   * **VertexManager.CleanupThread**
 
@@ -290,7 +290,7 @@ Any binded events are referenced in code through this format: ```componentName..
     Anything written in the state's .new() will override these
   * **VertexManager:Init()**
 
-    initalizes Vertex for the first time, and sets up a bind to cleanup whenever a new character is added for the player
+    initializes Vertex for the first time, and sets up a bind to cleanup whenever a new character is added for the player
   * **VertexManager:Cleanup()**
  
     kills all running threads to prevent possible desync issues, and resets all variables
@@ -300,7 +300,7 @@ Any binded events are referenced in code through this format: ```componentName..
 
     queries the new playermodel for necessary components to be referenced within .Shared
   
-    add any references as necessary, utilzing WaitForChild
+    add any references as necessary, utilizing WaitForChild
   * **VertexManager:createBind(func, component, actionName, keycodes, mobileButton)**
   
     Passed Variables: function, instance, string, array, boolean
@@ -346,13 +346,13 @@ Any binded events are referenced in code through this format: ```componentName..
     Used as the identifier for the state within code. If not specified, it will default to the file name
   * **State:onEnter(dt)**
  
-    runs upon being switched to from another state. will yeild State:onUpdate() and Manager:changeState() until returns true.
+    runs upon being switched to from another state. will yield State:onUpdate() and Manager:changeState() until returns true.
   * **State:onUpdate(dt)**
  
     runs every frame while the state is active
   * **State:onExit(dt)**
  
-    runs upon switching to another state. will yeild State:onUpdate(), preventing the next state's onEnter to begin until returns true
+    runs upon switching to another state. will yield State:onUpdate(), preventing the next state's onEnter to begin until returns true
 * Component
   * **Component.new(Manager)**
 
@@ -406,7 +406,7 @@ Any binded events are referenced in code through this format: ```componentName..
 
     DataType = int
 
-    specifies the render piority to be used for the renderstepped bind
+    specifies the render priority to be used for the renderstepped bind
     
   * **printWarnings**
 

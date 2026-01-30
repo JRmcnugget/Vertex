@@ -31,14 +31,14 @@ Vertex is designed from the ground up to be transparent with how it functions, e
 <div align="center">
 For a complete implementation example, including multiple state transitions, use of components, and abilities, explore the Vertex Demo place, uncopylocked on Roblox or available for download in the releases tab.
 
-(Link should go here).
+* **Vertex Demo Place**: [Vertex Demo - Roblox](https://www.roblox.com/games/95530238964993/Vertex-Demo)
 </div>
 
 * **Installation**
 
   * Download Vertex
 
-  You can download Vertex through the releases tab, or alternatively, edit the uncopylocked demo on the Roblox website (link should be here). 
+  You can download Vertex through the releases tab, or alternatively, edit the uncopylocked demo on the Roblox website [Vertex Demo - Roblox](https://www.roblox.com/games/95530238964993/Vertex-Demo). 
 
   * Setup
 

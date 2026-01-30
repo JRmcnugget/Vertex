@@ -16,7 +16,7 @@ Vertex will automatically load any state or component modulescripts, creating in
 
 * **Automatic keybinding**
 
-Gif should go here
+![Vertex Demo Gif2](src/assets/vertexdemo2.gif)
 
 Vertex will automatically bind any specificed Component functions to their respective keybinds, eliminating the overhead of managing input connections manually.
 

@@ -84,16 +84,16 @@ end
 
 return State
 ```
-Both ```State:onEnter()``` and ```State:onExit()``` are not necessary for a state to function, but is it recommened to leave them blank regardless of their utilization.
+Both ```State:onEnter()``` and ```State:onExit()``` are not necessary for a state to function, but it is recommened to leave them blank regardless of their utilization.
 
 States waiting until ```State:onEnter()``` or ```State:onExit()``` has completed allows developers to utilize asynchronous transitions. If you need to wait for an animation, a sound, or something else to finish before the state offically begins or ends, you can postpone the return utilizing a ```task.wait()```.
 
-Inside any state hook, you have full access to the Vertex API through self.Manager. For example:
+Inside any state hook, you have full access to the Vertex API through ```self.Manager```. For example:
 * Referencing the player: ```self.Manager.Player```
 * Accessing a shared variable: ```self.Manager.Shared.isCool = true```
 * Requesting to change a state: ```self.Manager:changeState("Jumping")```
 
-States are referenced in code by their name variable. They will default to the filename of the modulescript unless specified in their self table. For example:
+States are referenced in code by their name variable. They will default to the filename of the modulescript unless specified in their ```self``` table. For example:
 
 * A state with the line ```Name = "epicState"``` will be referenced as ```epicState```.
   
@@ -132,35 +132,79 @@ States inherit default variables written in ```VertexManager.StateDefaults```. Y
 Component modules follow the format of:
 
 ```lua
+-- Required for proper metatable inheritance. Should not be deleted. 
 local Component = {}
 Component.__index = Component
 
+-- Returns the contents of the component to be loaded into memory by Vertex.
 function Component.new(Manager)
     local self = {
-        Manager = Manager,
-        Name = "ExampleComponent",
-        updateFrequency = nil,
-        accumulator = 0,
-        bindableEvents = {
+        Manager = Manager, -- links back to Vertex. Generally should not be modified
+        Name = "ExampleComponent", -- the name of the Component, in a string
+        updateFrequency = nil, -- identifies how often, in times per second, the Component:onUpdate() should be called
+        accumulator = 0, -- used to track how much time has passed in order to utilize updateFrequency
+        bindableEvents = { -- a list of functions in the component to be binded to an input
             ["Example"] = {functionName = "exampleEvent", keybinds = {Enum.KeyCode.Q}, mobileButton = false}
         }
     }
     return self
 end
 
+-- runs every frame, or according to updateFrequency if it is not nil
 function Component:onUpdate()
 end
 
+-- An event to be binded to by Vertex
 function Component:exampleEvent(inputType, inputObj)
 end
 
 return Component
 ```
+Only ```Component.new()``` is necessary for a component to function. Anything else may be excluded if necessary.
+
+Inside any component hook, you have access to the entire Vertex API using ```self.Manager```. For example:
+* Referencing the active state: ```self.Manager.ActiveState```
+* Modifying character properties: ```self.Manager.Shared.humanoidRoot.Anchored = true```
+
+Components are referred to in code by their name variable. They will default to the filename of the modulescript unless specified in their ```self``` table.
+
+How often ```Component:onUpdate()``` is called by Vertex can be modified by changing the ```updateFrequency``` variable within the Component's ```self``` table. ```updateFrequency``` specifies how often, in times per second, ```Component:onUpdate()``` will be called. If ```nil```, it will update every frame as usual. For example:
+* How often the function will be updated can be calculated using the formula of ```1/updateFrequency```
+* An ```updateFrequency``` of 10 will update the function 10 times per second (every 0.1 seconds)
+* An ```updateFrequency``` of 30 will update the function 30 times per second (every 0.033 seconds)
+* An ```updateFrequency``` that is ```nil``` will update every frame (every 0.0167 seconds for 60fps, every 0.0083 seconds for 120fps)
+
+**If a Component has a ```updateFrequency``` that is not ```nil```, it must have an ```accumlator``` number variable present in the ```self``` table, or ```Component:onUpdate()``` will not function.**
+
+Vertex will bind any functions specified within the Components ```bindableEvents``` table. ```bindableEvents``` follows this format:
+```lua
+[Identifier] = {functionName = string, keybinds = array, mobileButton = boolean}
+```
+* Identifier is a string and is not explicitly necessary
+
+* functionName is the name of the function in the Component to be binded to, which is case sensitve
+
+* keybinds is an array of keycodes, such as {Enum.KeyCode.Q, Enum.KeyCode.J}
+
+* mobileButton is a boolean, which is true or false
+
+
+Any binded events are referenced in code through this format: ```componentName.."_"..requestedBind.functionName```. For example:
+* For a Component with the name "ExampleComponent"
+  &
+  ```["Example"] = {functionName = "exampleEvent", keybinds = {Enum.KeyCode.Q}, mobileButton = false}```
+
+  The binded event would be referenced as: "ExampleComponent_exampleEvent"
+  
+<hr />
 
 * **Advanced Functionality**
 
-tutorial goes here
-  
+* By default, Vertex utilizes ContextActionService to bind Component Events. If you have need for an external library to bind functions, you can modify ```VertexManager:createBind()``` for your purposes.
+* Shared variables are within ```VertexManager.Shared```. It is recommened to set any player character variables to ```nil``` and instead utilize ```WaitForChild()``` to update them in ```VertexManager:updateCharacter()```.
+
+<hr />
+
 ## Documentation
 
 * VertexManager

@@ -9,13 +9,17 @@ It is designed to alleviate the burden of how character scripts intertwine, allo
 ## Features
 * **Dynamic Module Discovery**
 
-![Vertex Demo Gif1](src/assets/vertexdemo1.gif)
+<p align="center">
+  <img src="src/assets/vertexdemo1.gif" width="75%" alt="Vertex Dynamic Discovery Demo">
+</p>
 
 Vertex will automatically load any state or component modulescripts, creating instant functionality with minimal adjustments to how it works with other scripts. Want to add functionality for running or crouching? Just add a State, Component, or multiple, whichever suits your needs best!
 
 * **Automatic keybinding**
 
-![Vertex Demo Gif2](src/assets/vertexdemo2.gif)
+<p align="center">
+  <img src="src/assets/vertexdemo2.gif" width="75%" alt="Vertex Auto Binds Demo">
+</p>
 
 Vertex will automatically bind any specificed Component functions to their respective keybinds, eliminating the overhead of managing input connections manually.
 

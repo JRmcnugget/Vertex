@@ -21,11 +21,11 @@ Vertex will automatically load any state or component modulescripts, creating in
   <img src="src/assets/vertexdemo2.gif" width="75%" alt="Vertex Auto Binds Demo">
 </p>
 
-Vertex will automatically bind any specificed Component functions to their respective keybinds, eliminating the overhead of managing input connections manually.
+Vertex will automatically bind any specified Component functions to their respective keybinds, eliminating the overhead of managing input connections manually.
 
 * **Customizable API & architecture**
 
-Vertex is designed from the ground up to be transparent with how it functions, enabling developers to modify its contents to better fit there own needs.
+Vertex is designed from the ground up to be transparent with how it functions, enabling developers to modify its contents to better fit their own needs.
 
 
 **Future Plans:**
@@ -37,21 +37,21 @@ Vertex is designed from the ground up to be transparent with how it functions, e
 <div align="center">
 For a complete implementation example, including multiple state transitions, use of components, and abilities, explore the Vertex Demo place, uncopylocked on Roblox or available for download in the releases tab.
 
-* **Vertex Demo Place**: [Vertex Demo - Roblox](https://www.roblox.com/games/95530238964993/Vertex-Demo)
+* [Vertex Demo - Roblox](https://www.roblox.com/games/95530238964993/Vertex-Demo)
 </div>
 
 * **Installation**
 
   * Download Vertex
 
-  You can download Vertex through the releases tab, or alternatively, edit the uncopylocked demo on the Roblox website [Vertex Demo - Roblox](https://www.roblox.com/games/95530238964993/Vertex-Demo). 
+  You can download Vertex through the [releases tab](https://github.com/JRmcnugget/Vertex/releases), or alternatively, edit the [uncopylocked demo on the Roblox website](https://www.roblox.com/games/95530238964993/Vertex-Demo). 
 
   * Setup
 
 
   Place the VertexLib folder within ReplicatedStorage, and the Vertex localscript within StarterPlayerScripts.
 
-  Modify VertexConfig's initalState line, replacing "Grounded" with the string of the state's name the player should begin in.
+  Modify VertexConfig's initialState line, replacing "Grounded" with the string of the state's name the player should begin in.
 
   You should be ready to go!
 
@@ -75,7 +75,7 @@ function State.new(Manager)
     return self
 end
 
--- Triggers upon the state being swapped to from another state. Should be used for any state specific initalization
+-- Triggers upon the state being swapped to from another state. Should be used for any state specific initialization
 -- State:onUpdate() will not run until this returns true.
 function State:onEnter(dt)
     return true
@@ -93,9 +93,9 @@ end
 
 return State
 ```
-Both ```State:onEnter()``` and ```State:onExit()``` are not necessary for a state to function, but it is recommened to leave them blank regardless of their utilization.
+Both ```State:onEnter()``` and ```State:onExit()``` are not necessary for a state to function, but it is recommended to leave them blank regardless of their utilization.
 
-States waiting until ```State:onEnter()``` or ```State:onExit()``` has completed allows developers to utilize asynchronous transitions. If you need to wait for an animation, a sound, or something else to finish before the state offically begins or ends, you can postpone the return utilizing a ```task.wait()```.
+States waiting until ```State:onEnter()``` or ```State:onExit()``` has completed allows developers to utilize asynchronous transitions. If you need to wait for an animation, a sound, or something else to finish before the state officially begins or ends, you can postpone the return utilizing a ```task.wait()```.
 
 Inside any state hook, you have full access to the Vertex API through ```self.Manager```. For example:
 * Referencing the player: ```self.Manager.Player```
@@ -108,7 +108,7 @@ States are referenced in code by their name variable. They will default to the f
   
   * eg. ```self.Manager:changeState("epicState")``` or ```self.Manager.States["epicState"]```
 
- * A state with no line for name, but has the file name "ExampleState" will be refenced as ```ExampleState```.
+ * A state with no line for name, but has the file name "ExampleState" will be referenced as ```ExampleState```.
 
 States inherit default variables written in ```VertexManager.StateDefaults```. You are able to overwrite the default by writing the new value within the State's ```self```, within ```State.new()```. For example:
 
@@ -218,100 +218,95 @@ Any binded events are referenced in code through this format: ```componentName..
 ## Documentation
 
 * VertexManager
-  * VertexManager
 
-    DataType = array
-
-    The VertexManager itself
-
-  * VertexManager.Config
+  * **VertexManager.Config**
 
     DataType = array
 
     Contains the list of Configs as obtained by the VertexConfig modulescript
 
-  * VertexManager.ActiveState
+  * **VertexManager.ActiveState**
  
     Datatype = array
 
     Contains a reference to the currently active state
 
-  * VertexManager.Player
+  * **VertexManager.Player**
 
     DataType = instance
 
     A reference to the Player instance of the LocalPlayer
 
-  * VertexManager.AwaitingSignal
+  * **VertexManager.AwaitingSignal**
 
     DataType = boolean
 
-    Used witin VertexManager:changeState(), yeilding State:onUpdate() until it is false
+    Used witin VertexManager:changeState(), yielding State:onUpdate() until it is false
 
-  * VertexManager.States
+  * **VertexManager.States**
  
     DataType = Array
 
     Contains a reference to each loaded State
 
-  * VertexManager.Components
+  * **VertexManager.Components**
  
     DataType = Array
 
     Contains a reference to each loaded Component
 
-  * VertexManager.ActiveThreads
+  * **VertexManager.ActiveThreads**
 
     DataType = Array
 
-    Contains a reference to each currently active thread, which is used to kill any active ones during cleanup to prevent desync issues. If you are utilzing anything that creates another thread, it is imporant to store it within this table
+    Contains a reference to each currently active thread, which is used to kill any active ones during cleanup to prevent desync issues. If you are utilizing anything that creates another thread, it is imporant to store it within this table
 
-  * VertexManager.CleanupThread
+  * **VertexManager.CleanupThread**
 
     DataType = thread
 
     Contains a reference to the thread doing the cleanup in Vertex after VertexManager:Cleanup() has been called
 
-  * VertexManager.BindedEvents
+  * **VertexManager.BindedEvents**
 
     DataType = Array
 
     A table containing all binded component events for reference if needed
     
-  * VertexManager.Shared
+  * **VertexManager.Shared**
  
     DataType = Array
  
     variables available for ready access across any State or Component
-  * VertexManager.SharedDefault
+  * **VertexManager.SharedDefault**
  
     DataType = Array
  
     A clone of VertexManager.Shared, so it may reset to it upon VertexManager:Cleanup() is called
-  * VertexManager.StateDefaults
+  * **VertexManager.StateDefaults**
 
-    base variables and/or capabilites of a state to inheret upon loading
+    base variables and/or capabilites of a state to inherit upon loading
 
     Anything written in the state's .new() will override these
-  * VertexManager:Init()
+  * **VertexManager:Init()**
 
     initalizes Vertex for the first time, and sets up a bind to cleanup whenever a new character is added for the player
-  * VertexManager:Cleanup()
+  * **VertexManager:Cleanup()**
  
     kills all running threads to prevent possible desync issues, and resets all variables
-  * VertexManager:updateCharacter(newModel)
+  * **VertexManager:updateCharacter(newModel)**
  
     Passed Variables: instance
 
     queries the new playermodel for necessary components to be referenced within .Shared
   
     add any references as necessary, utilzing WaitForChild
-  * VertexManager:createBind(func, component, actionName, keycodes, mobileButton)
+  * **VertexManager:createBind(func, component, actionName, keycodes, mobileButton)**
   
     Passed Variables: function, instance, string, array, boolean
   
     binds the given function using contextactionservice
-  * VertexManager:changeState(newState, override, dt)
+  * **VertexManager:changeState(newState, override, dt)**
   
     Passed Variables: string (stateName), boolean (true/false), number
   
@@ -321,67 +316,69 @@ Any binded events are referenced in code through this format: ```componentName..
   
     if a changestate is requested in the middle of another state change, it will interupt the currently ongoing one in favour of the new state
   
-  * VertexManager:getModules(parent)
+  * **VertexManager:getModules(parent)**
   
     Passed Variables: instance
 
     helper function to remove redundant code, and gather all valid modules
-  * VertexManager:loadStates()
+  * **VertexManager:loadStates()**
  
     load all states into VertrexManager.States, and provide metatable inheritance from .StateDefaults
-  * VertexManager:loadComponents()
+  * **VertexManager:loadComponents()**
  
     load components into VertexManager.Components, and binds any functions referenced in the components bindableEvents table
-  * VertexManager:update(dt)
+  * **VertexManager:update(dt)**
 
     runs the active state's onUpdate, along with any other components with an onUpdate function
 * State
-  * State.new(Manager)
+  * **State.new(Manager)**
 
     returns the state's local variables as identified in self. will inherit any variables from Vertex.StateDefaults
-  * State.Manager
+  * **State.Manager**
 
     DataType = array
 
     Links back to VertexManager, allowing access to the Vertex API within a state hook
-  * State.Name
+  * **State.Name**
  
     DataType = string
  
     Used as the identifier for the state within code. If not specified, it will default to the file name
-  * State:onEnter(dt)
+  * **State:onEnter(dt)**
  
     runs upon being switched to from another state. will yeild State:onUpdate() and Manager:changeState() until returns true.
-  * State:onUpdate(dt)
+  * **State:onUpdate(dt)**
  
     runs every frame while the state is active
-  * State:onExit(dt)
+  * **State:onExit(dt)**
  
     runs upon switching to another state. will yeild State:onUpdate(), preventing the next state's onEnter to begin until returns true
 * Component
-  * Component.new(Manager)
+  * **Component.new(Manager)**
 
     returns the components's local variables as identified in self
-  * Component.Manager
+  * **Component.Manager**
 
     DataType = array
 
     Links back to VertexManager, allowing access to the Vertex API within a component hook
-  * Component.Name
+  * **Component.Name**
 
     DataType = string
     
     Used as the identifier for the component within code. If not specified, it will default to the file name
-  * Component.updateFrequency
+  * **Component.updateFrequency**
 
     DataType = int
 
     specifies how often, in times per second, Component:onUpdate() will be called.
-  * Component.accumlator
+  * **Component.accumulator**
 
     DataType = number
+
+    required if Component.updateFrequency ~= nil
     
-  * Component.bindableEvents
+  * **Component.bindableEvents**
 
     DataType = array
 
@@ -391,36 +388,36 @@ Any binded events are referenced in code through this format: ```componentName..
 
     Identifier: string
 
-    functionName: string, used to reference component function, case sensitve
+    functionName: string, used to reference component function, case sensitive
 
     keybinds: array, containing list of KeyCodes
 
     mobileButton: true or false, identifies whether or not a mobile button should be made
-  * Component:onUpdate(dt)
+  * **Component:onUpdate(dt)**
 
     runs everyframe, unless given a specific update rate by Component.updateFrequency
 * VertexConfig
-  * InitalState
+  * **InitalState**
     
     DataType = string
 
-    specifies what state the player should begin in after spawning in. case senstive
-  * RenderPriority
+    specifies what state the player should begin in after spawning in. case sensitive
+  * **RenderPriority**
 
     DataType = int
 
     specifies the render piority to be used for the renderstepped bind
     
-  * printWarnings
+  * **printWarnings**
 
     DataType = boolean
 
     specifies whether or not Vertex should print warnings
 
-  * stateFolder
+  * **stateFolder**
 
     specifies where states are to be found. change if necessary
-  * componentFolder
+  * **componentFolder**
 
     specifies where components are to be found. change if necessary
 

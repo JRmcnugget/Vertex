@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><strong>Vertex v0.10</strong> <img src="https://img.shields.io/badge/Status-Beta-blue" width="75" height="75"></h1> 
+  <h1><strong>Vertex v0.10.1</strong> <img src="https://img.shields.io/badge/Status-Beta-blue" width="75" height="75"></h1> 
   <img src="src/assets/coolbeanbadge.png" width="200" height="200"> 
 </div>
 

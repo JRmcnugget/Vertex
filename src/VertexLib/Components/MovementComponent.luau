@@ -1,6 +1,8 @@
 local Component = {}
 Component.__index = Component
 
+local userinput = game:GetService("UserInputService")
+
 function Component.new(Manager)
     local self = {
         Manager = Manager,
@@ -9,7 +11,7 @@ function Component.new(Manager)
         accumulator = 0,
         bindableEvents = {
             ["Jump"] = {functionName = "requestJump", keybinds = {Enum.KeyCode.Space}, mobileButton = true},
-            ["Crouch"] = {functionName = "requestCrouch", keybinds = {Enum.KeyCode.LeftControl, Enum.KeyCode.C}, mobileButton = true}
+            ["Crouch"] = {functionName = "requestCrouch", keybinds = {Enum.KeyCode.LeftControl, Enum.KeyCode.E}, mobileButton = true}
         },
         jumpImpulse = Vector3.new(0,250,0)
     }
@@ -73,15 +75,20 @@ function Component:setOffset()
 end
 
 function Component:requestCrouch(inputType, inputObj)
-    if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canCrouch and not self.Manager.Shared.isCrouched then
-        self.Manager.Shared.hitbox.Size = self.Manager.Shared.hitboxSizeCrouched
-        self.Manager.Shared.isCrouched = true
-        self.Manager.Shared.crouchInput = true
-        self.Manager.Shared.controllerManager.BaseMoveSpeed = self.Manager.Shared.crouchSpeed
-        self.Manager.Shared.groundController.GroundOffset = self.Manager.Shared.groundOffsetCrouched
-        self:setOffset()
-        self.Manager.Shared.groundSensor.SearchDistance = self.Manager.Shared.groundOffsetCrouched + self.Manager.Shared.safeCheckOffset
-    elseif inputType == Enum.UserInputState.End and self.Manager.Shared.isCrouched then
+    local mobilePress = userinput.TouchEnabled
+    if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canCrouch then
+        if mobilePress and self.Manager.Shared.isCrouched then
+            self.Manager.Shared.crouchInput = false
+        elseif not self.Manager.Shared.isCrouched then
+            self.Manager.Shared.hitbox.Size = self.Manager.Shared.hitboxSizeCrouched
+            self.Manager.Shared.isCrouched = true
+            self.Manager.Shared.crouchInput = true
+            self.Manager.Shared.controllerManager.BaseMoveSpeed = self.Manager.Shared.crouchSpeed
+            self.Manager.Shared.groundController.GroundOffset = self.Manager.Shared.groundOffsetCrouched
+            self:setOffset()
+            self.Manager.Shared.groundSensor.SearchDistance = self.Manager.Shared.groundOffsetCrouched + self.Manager.Shared.safeCheckOffset
+        end
+    elseif (inputType == Enum.UserInputState.End and self.Manager.Shared.isCrouched) and not mobilePress then
         self.Manager.Shared.crouchInput = false
     end
 end

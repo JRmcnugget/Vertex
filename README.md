@@ -49,9 +49,9 @@ For a complete implementation example, including multiple state transitions, use
   * Setup
 
 
-  Place the VertexLib folder within ReplicatedStorage, and the Vertex localscript within StarterPlayerScripts.
+  Place the VertexLib folder within ReplicatedStorage, StarterCharacter within StarterPlayer, and the Vertex localscript within StarterPlayerScripts.
 
-  Modify VertexConfig's initialState line, replacing "Grounded" with the string of the state's name the player should begin in.
+  Modify VertexConfig's initialState line, replacing "ExampleState" with the string of the state's name the player should begin in.
 
   You should be ready to go!
 

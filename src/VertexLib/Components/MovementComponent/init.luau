@@ -10,7 +10,6 @@ function Component.new(Manager)
         updateFrequency = nil,
         accumulator = 0,
         bindableEvents = {
-            ["Jump"] = {functionName = "requestJump", keybinds = {Enum.KeyCode.Space}, mobileButton = true},
             ["Crouch"] = {functionName = "requestCrouch", keybinds = {Enum.KeyCode.LeftControl, Enum.KeyCode.E}, mobileButton = true}
         },
         jumpImpulse = Vector3.new(0,250,0)
@@ -41,8 +40,8 @@ function Component:onUpdate()
     end
 end
 
-function Component:requestJump(inputType, inputObj)
-    if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canJump and self.Manager.Shared.numJumps < 2 then
+function Component:OnJump(newState)
+    if newState == true and self.Manager.ActiveState.canJump and self.Manager.Shared.numJumps < 2 then
         local vel = self.Manager.Shared.humanoidRoot.AssemblyLinearVelocity
         self.Manager.Shared.humanoidRoot.AssemblyLinearVelocity = Vector3.new(vel.X, 0, vel.Z)
         self.Manager.Shared.humanoidRoot:ApplyImpulse(self.jumpImpulse)
@@ -74,9 +73,9 @@ function Component:setOffset()
     self.Manager.Shared.humanoidRoot.HitboxWeld.C1 = offset.C1
 end
 
-function Component:requestCrouch(inputType, inputObj)
+function Component:OnCrouch(newState)
     local mobilePress = userinput.TouchEnabled
-    if inputType == Enum.UserInputState.Begin and self.Manager.ActiveState.canCrouch then
+    if newState == true and self.Manager.ActiveState.canCrouch then
         if mobilePress and self.Manager.Shared.isCrouched then
             self.Manager.Shared.crouchInput = false
         elseif not self.Manager.Shared.isCrouched then
@@ -88,7 +87,7 @@ function Component:requestCrouch(inputType, inputObj)
             self:setOffset()
             self.Manager.Shared.groundSensor.SearchDistance = self.Manager.Shared.groundOffsetCrouched + self.Manager.Shared.safeCheckOffset
         end
-    elseif (inputType == Enum.UserInputState.End and self.Manager.Shared.isCrouched) and not mobilePress then
+    elseif (newState == false and self.Manager.Shared.isCrouched) and not mobilePress then
         self.Manager.Shared.crouchInput = false
     end
 end

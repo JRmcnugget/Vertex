@@ -3,7 +3,9 @@ local VertexConfig = {
     RenderPriority = Enum.RenderPriority.Camera.Value + 1,
     printWarnings = true,
     stateFolder = game.ReplicatedStorage.VertexLib:FindFirstChild('States'),
-    componentFolder = game.ReplicatedStorage.VertexLib:FindFirstChild('Components')
+    componentFolder = game.ReplicatedStorage.VertexLib:FindFirstChild('Components'),
+    mobileButtonTemplate = nil,
+    componentInputBindPrefix = "On"
 }
 
 return VertexConfig

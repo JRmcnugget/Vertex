@@ -8,9 +8,6 @@ function Component.new(Manager)
         Name = "ExampleComponent",
         updateFrequency = nil,
         accumulator = 0,
-        bindableEvents = {
-            ["Example"] = {functionName = "exampleEvent", keybinds = {Enum.KeyCode.Q}, mobileButton = false}
-        }
     }
     return self
 end
@@ -19,7 +16,7 @@ function Component:onUpdate(dt)
     
 end
 
-function Component:exampleEvent(inputType, inputObj)
+function Component:OneExampleEvent(newState)
     
 end
 

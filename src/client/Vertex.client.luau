@@ -2,7 +2,6 @@
 -- by JRmcnugget
 
 --Roblox Services
-local ContextActionService = game:GetService("ContextActionService")
 local runService = game:GetService("RunService")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local VertexLib = replicatedStorage:WaitForChild('VertexLib')
@@ -103,14 +102,13 @@ function VertexManager:updateCharacter(newModel)
 end
 
 -- binds the given function using contextactionservice
--- function, instance, string, array, boolean
-function VertexManager:createBind(func, component, actionName, keycodes, mobileButton)
-    local bindedEvent = ContextActionService:BindAction(actionName, function(actionName, inputType, inputObj)
-        if inputType == Enum.UserInputState.Begin or inputType == Enum.UserInputState.End then
-           func(component, inputType, inputObj) -- function expects a self value as the first variable so we must pass it to it
-        end
-    end, mobileButton, unpack(keycodes))
+-- function, instance, string
+function VertexManager:createBinds(func, component, inputAction)
 
+    local bindedEvent = inputAction.StateChanged:Connect(function(newState)
+        func(component, newState) -- the returned information varies depending on the input bind type, so we pass it to the function for developer use. the component must have itself passed to it as well in the first variable
+    end)
+    
     return bindedEvent
 end
 
@@ -199,21 +197,24 @@ function VertexManager:loadComponents()
         componentInstance = setmetatable(componentInstance, componentModule)
         local componentName = componentInstance.Name and componentInstance.Name or module.Name
         self.Components[componentName] = componentInstance
-        
-        if componentInstance.bindableEvents then
-            for count, requestedBind in pairs(componentInstance.bindableEvents) do
-                if (requestedBind.functionName and type(requestedBind.functionName) == "string") and requestedBind.keybinds then
-                    for count2, keyCode in pairs(requestedBind.keybinds) do
-                       if keyCode.EnumType ~= Enum.KeyCode then
-                           error(tostring(keyCode).."is not a valid keycode!")
-                        end
-                    end
-                    local requestedEvent = componentInstance[requestedBind.functionName]
+
+        local componentChildren = module:GetChildren()
+        if #componentChildren > 0 then
+            for count, bindInstance in pairs(componentChildren) do
+                if bindInstance:IsA("InputAction") then
+                    local prefix = self.Config.componentInputBindPrefix and self.Config.componentInputBindPrefix or ""
+                    local override = bindInstance:GetAttribute("handlerOverride")
+                    local requestEventName = override or (prefix..bindInstance.Name)
+                    local requestedEvent = componentInstance[requestEventName]
                     if requestedEvent then
-                        self.BindedEvents[componentName.."_"..requestedBind.functionName] = self:createBind(requestedEvent, componentInstance, requestedBind.functionName, requestedBind.keybinds, requestedBind.mobileButton)
+                        self.BindedEvents[componentName.."_"..requestEventName] = self:createBinds(requestedEvent, componentInstance, bindInstance)
+                    elseif self.Config.printWarnings then
+                        warn("Function "..requestEventName.." of component "..componentName.." does not exist! Did you type the InputAction or Function name correctly?")
                     end
                 else
-                    error("Arugment invalid for requested bind "..tostring(requestedBind).. "of component"..componentName)
+                    if self.Config.printWarnings then
+                        warn("Component "..bindInstance.Name.." is not an InputAction, ignoring...")
+                    end
                 end
             end
         end

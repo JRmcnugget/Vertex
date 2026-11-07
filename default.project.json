@@ -1,0 +1,58 @@
+{
+  "name": "VertexDemo",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "VertexLib": {
+        "$path": "src/VertexLib"
+      }
+    },
+
+    "ServerScriptService": {
+      "Server": {
+        "$path": "src/server"
+      }
+    },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "$path": "src/client"
+      },
+      "StarterCharacterScripts": {
+        "$path": "src/character"
+      },
+      "StarterCharacter":{
+        "$path": "src/assets/character/StarterCharacter.rbxm"
+      }
+    },
+    
+    "Workspace": {
+      "$properties": {
+        "FilteringEnabled": true
+      },
+      "envMovementTest": {
+        "$className": "Folder",
+        "$path": "src/assets/world/environment_movementTest.rbxm"
+      }
+      },
+    "Lighting": {
+      "$properties": {
+        "Ambient": [
+          0,
+          0,
+          0
+        ],
+        "Brightness": 2,
+        "GlobalShadows": true,
+        "Outlines": false,
+        "Technology": "Voxel"
+      }
+    },
+    "SoundService": {
+      "$properties": {
+        "RespectFilteringEnabled": true
+      }
+    }
+  }
+}

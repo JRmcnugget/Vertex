@@ -1,4 +1,4 @@
---Vertex v0.12.0
+--Vertex v0.12.5
 -- by JRmcnugget
 
 --Roblox Services

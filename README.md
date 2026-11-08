@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><strong>Vertex v0.10.1</strong> <img src="https://img.shields.io/badge/Status-Beta-blue" width="75" height="25"></h1> 
+  <h1><strong>Vertex v0.12.5</strong> <img src="https://img.shields.io/badge/Status-Beta-blue" width="75" height="25"></h1> 
   <img src="src/assets/coolbeanbadge.png" width="200" height="200"> 
   
   ***Cool Bean Approved***
@@ -7,8 +7,6 @@
 
 Vertex is a decoupled, state and component driven framework for Roblox player character creation. 
 It is designed to alleviate the burden of how character scripts intertwine, allowing developers to focus on gameplay depth instead of technical debt.
-
-**Vertex is no longer maintained. Please check back later for its successor.**
 
 ## Features
 * **Dynamic Module Discovery**
@@ -182,6 +180,7 @@ How often ```Component:onUpdate()``` is called by Vertex can be modified by chan
 * An ```updateFrequency``` of 10 will update the function 10 times per second (every 0.1 seconds)
 * An ```updateFrequency``` of 30 will update the function 30 times per second (every 0.033 seconds)
 * An ```updateFrequency``` that is ```nil``` will update every frame (every 0.0167 seconds for 60fps, every 0.0083 seconds for 120fps)
+When a component's ```updateFrequency``` is not default, the variable ```dtComplete``` is passed along with deltaTime (``dt``), which is the total amount of time passed from the component's last update. Use this variable if you are doing anything that requires full knowledge of deltaTime within a component that does not update every frame.
 
 Vertex will bind any functions specified by InputAction instances that are children of the component. These function names are based on the InputAction's name and the componentInputBindPrefix specified within ```VertexConfig```. The function Vertex will look for to bind to can be overridden with a string attribute with the name of "handlerOverride" attached to the InputAction.
 For example:
@@ -386,9 +385,12 @@ For binded events such as ```Component:OnExampleEvent(newState)```, the variable
 
     keeps track of how much time has accumilated to throttle component onUpdate()s based on their updateFrequency
 
-  * **Component:onUpdate(dt)**
+  * **Component:onUpdate(dt, dtComplete)**
 
     runs everyframe, unless given a specific update rate by Component.updateFrequency
+
+    dt: current deltaTime
+    dtComplete: the time passed from the component's last update, only provided if updateFrequency ~= nil
 * VertexConfig
   * **InitalState**
     

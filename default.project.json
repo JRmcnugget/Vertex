@@ -15,6 +15,12 @@
       }
     },
 
+    "StarterGui": {
+      "Server": {
+        "$path": "src/assets/plrGUI"
+      }
+    },
+
     "StarterPlayer": {
       "StarterPlayerScripts": {
         "$path": "src/client"

@@ -117,7 +117,7 @@ end
 
 -- binds the given function using Input Action System
 -- function, instance, string
-function VertexManager:createBinds(func, component, inputAction)
+function VertexManager:createBind(func, component, inputAction)
 
     local bindedEvent = inputAction.StateChanged:Connect(function(newState)
         func(component, newState) -- the returned information varies depending on the input bind type, so we pass it to the function for developer use. the component must have itself passed to it as well in the first variable
@@ -155,6 +155,7 @@ function VertexManager:changeState(newState, override, dt)
                     end
                     
                     self.ActiveState = requestedState
+                    self.PreviousState = previousState
                     local newStateName = requestedState.Name and requestedState.Name or tostring(requestedState)
                     if requestedState and requestedState.onEnter then
                         requestedState:onEnter(dt)
@@ -163,7 +164,6 @@ function VertexManager:changeState(newState, override, dt)
                     end
                     self.AwaitingSignal = false
                     self.ActiveThreads["ChangeState"] = nil
-                    self.PreviousState = previousState
                 end)
 
             end
@@ -255,7 +255,7 @@ function VertexManager:loadComponents()
                         bindInstanceClone.Parent = inputContext
                         bindInstanceClone.Name = componentName.."_"..bindInstance.Name
                         
-                        self.BindedEvents[componentName.."_"..requestEventName] = self:createBinds(requestedEvent, componentInstance, bindInstanceClone)
+                        self.BindedEvents[componentName.."_"..requestEventName] = self:createBind(requestedEvent, componentInstance, bindInstanceClone)
                     elseif self.Config.printWarnings then
                         warn("Function "..requestEventName.." of component "..componentName.." does not exist! Did you type the InputAction or Function name correctly?")
                     end

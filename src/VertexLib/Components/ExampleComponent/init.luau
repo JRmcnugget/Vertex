@@ -18,7 +18,7 @@ function Component:onUpdate(dt, dtComplete)
     
 end
 
-function Component:OneExampleEvent(newState) -- newState is variable(s) passed when an input action is activated. varies between the different types of inputbindings, see Roblox's IAS documentation
+function Component:OnExampleEvent(newState) -- newState is variable(s) passed when an input action is activated. varies between the different types of inputbindings, see Roblox's IAS documentation
     
 end
 

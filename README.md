@@ -142,6 +142,7 @@ Component modules follow the format of:
 
 ```lua
 -- Required for proper metatable inheritance. Should not be deleted. 
+
 local Component = {}
 Component.__index = Component
 
@@ -152,19 +153,18 @@ function Component.new(Manager)
         Name = "ExampleComponent", -- the name of the Component, in a string
         updateFrequency = nil, -- identifies how often, in times per second, the Component:onUpdate() should be called
         accumulator = 0, -- used to track how much time has passed in order to utilize updateFrequency
-        bindableEvents = { -- a list of functions in the component to be binded to an input
-            ["Example"] = {functionName = "exampleEvent", keybinds = {Enum.KeyCode.Q}, mobileButton = false}
-        }
     }
     return self
 end
 
 -- runs every frame, or according to updateFrequency if it is not nil
-function Component:onUpdate()
+function Component:onUpdate(dt, dtComplete) 
+    
 end
 
 -- An event to be binded to by Vertex
-function Component:exampleEvent(inputType, inputObj)
+function Component:OnExampleEvent(newState) 
+    
 end
 
 return Component
@@ -183,33 +183,29 @@ How often ```Component:onUpdate()``` is called by Vertex can be modified by chan
 * An ```updateFrequency``` of 30 will update the function 30 times per second (every 0.033 seconds)
 * An ```updateFrequency``` that is ```nil``` will update every frame (every 0.0167 seconds for 60fps, every 0.0083 seconds for 120fps)
 
-**If a Component has a ```updateFrequency``` that is not ```nil```, it must have an ```accumlator``` number variable present in the ```self``` table, or ```Component:onUpdate()``` will not function.**
+Vertex will bind any functions specified by InputAction instances that are children of the component. These function names are based on the InputAction's name and the componentInputBindPrefix specified within ```VertexConfig```. The function Vertex will look for to bind to can be overridden with a string attribute with the name of "handlerOverride" attached to the InputAction.
+For example:
+* For a InputAction named "Jump", and the componentInputBindPrefix "On", Vertex will bind the action to the function "OnJump" if found.
+* For an InputAction with the name "Crouch", and the handlerOverride attirbute "doCrouch", Vertex will bind the action to the function "doCrouch" if found.
 
-Vertex will bind any functions specified within the Components ```bindableEvents``` table. ```bindableEvents``` follows this format:
-```lua
-[Identifier] = {functionName = string, keybinds = array, mobileButton = boolean}
-```
-* Identifier is a string and is not explicitly necessary
+Any binded events are referenced in code through this format: ```componentName.."_"..requestEventName```. For example:
+* For a Component with the name "ExampleComponent" and the binded function "exampleFunction", with the prefix "On":
+  The binded event would be referenced as: "ExampleComponent_OnexampleFunction"
+* For a Component with the name "MovementComponent" and the binded function "doCrouch" from the attribute handlerOverride:
+  The binded event would be referenced as: "MovementComponent_doCrouch"
 
-* functionName is the name of the function in the Component to be binded to, which is case sensitve
+Binded events are parented to the default InputContext specified by VertexConfig's componentDefaultInputContext. This can be overridden by a string attribute with the name of "inputContext" attached to the InputAction. Vertex will create a new InputContext for the specified context name if it does not already exist. These InputContexts are found within the folder referenced by ```VertexManager.InputContexts```. 
+For example:
+* For an InputAction with the inputContext attribute "ExampleContext", Vertex will parent the action under ExampleContext within ```VertexManager.InputContexts```. 
 
-* keybinds is an array of keycodes, such as {Enum.KeyCode.Q, Enum.KeyCode.J}
-
-* mobileButton is a boolean, which is true or false
-
-
-Any binded events are referenced in code through this format: ```componentName.."_"..requestedBind.functionName```. For example:
-* For a Component with the name "ExampleComponent"
-  &
-  ```["Example"] = {functionName = "exampleEvent", keybinds = {Enum.KeyCode.Q}, mobileButton = false}```
-
-  The binded event would be referenced as: "ExampleComponent_exampleEvent"
+For binded events such as ```Component:OnExampleEvent(newState)```, the variable ```newState``` varies depending on the type of InputBinding triggered for the InputAction. See Roblox's [Input events documentation](https://create.roblox.com/docs/input/input-action-system#input-events) for details.
   
 <hr />
 
 * **Advanced Functionality**
 
-* By default, Vertex utilizes ContextActionService to bind Component Events. If you have need for an external library to bind functions, you can modify ```VertexManager:createBind()``` for your purposes.
+* By default, Vertex utilizes Roblox's new InputActionSystem to bind Component Events. If you have need for an external library to bind functions, you can modify ```VertexManager:createBind()``` for your purposes.
+* By default, Vertex creates a folder within the player to store InputContexts, referenced by ```VertexManager.InputContexts```. This can be used for disabling of certain inputs/controls and adjusting InputContext priorities. 
 * Shared variables are within ```VertexManager.Shared```. It is recommended to set any player character variables to ```nil``` and instead utilize ```WaitForChild()``` to update them in ```VertexManager:updateCharacter()```.
 * Vertex clears all spawned tasks upon cleanup, which is necessary to prevent possible desyncs. If you are using ```task.spawn```, ```task.defer```, ```task.delay```, a ```coroutine```, or something similar that utilizes another thread, it is **heavily** recommened to store it within ```VertexManager.ActiveThreads``` to ensure proper cleanup.
 
@@ -230,6 +226,12 @@ Any binded events are referenced in code through this format: ```componentName..
     Datatype = array
 
     Contains a reference to the currently active state
+
+  * **VertexManager.PreviousState**
+
+   Datatype = array
+   
+   Contains a reference to the previously active state
 
   * **VertexManager.Player**
 
@@ -254,6 +256,12 @@ Any binded events are referenced in code through this format: ```componentName..
     DataType = Array
 
     Contains a reference to each loaded Component
+
+  * **VertexManager.InputContexts**
+
+    DataType = Folder
+
+    A reference holding every InputContext created by Vertex. Useful to reference specific contexts during scripting for enabling/disabling of certain controls
 
   * **VertexManager.ActiveThreads**
 
@@ -301,9 +309,9 @@ Any binded events are referenced in code through this format: ```componentName..
     queries the new playermodel for necessary components to be referenced within .Shared
   
     add any references as necessary, utilizing WaitForChild
-  * **VertexManager:createBind(func, component, actionName, keycodes, mobileButton)**
+  * **VertexManager:createBind(func, component, inputAction)**
   
-    Passed Variables: function, instance, string, array, boolean
+    Passed Variables: function, instance, string
   
     binds the given function using contextactionservice
   * **VertexManager:changeState(newState, override, dt)**
@@ -376,23 +384,8 @@ Any binded events are referenced in code through this format: ```componentName..
 
     DataType = number
 
-    required if Component.updateFrequency ~= nil
-    
-  * **Component.bindableEvents**
+    keeps track of how much time has accumilated to throttle component onUpdate()s based on their updateFrequency
 
-    DataType = array
-
-    Contains a list of functions to be binded to keybinds
-
-    Follows the format of: [Identifier] = {functionName = string, keybinds = array, mobileButton = boolean}
-
-    Identifier: string
-
-    functionName: string, used to reference component function, case sensitive
-
-    keybinds: array, containing list of KeyCodes
-
-    mobileButton: true or false, identifies whether or not a mobile button should be made
   * **Component:onUpdate(dt)**
 
     runs everyframe, unless given a specific update rate by Component.updateFrequency
@@ -420,6 +413,30 @@ Any binded events are referenced in code through this format: ```componentName..
   * **componentFolder**
 
     specifies where components are to be found. change if necessary
+
+    * **componentInputBindPrefix**
+
+    DataType = string
+
+    specifies what prefix to use in front of the InputAction's name when Vertex looks for the function to bind to the action. if not specified, there will be no prefix
+
+    * **componentDefaultInputContext**
+
+    DataType = string
+
+    specifies the name of the default InputContext instance that Vertex will parent InputActions under unless otherwise specified
+
+    * **componentInputContextDefaultPriority**
+
+    DataType = int
+
+    specifies the default priority level each InputContext will be created with. if not specified, it will default to the InputContext default priority (1000)
+
+    * **componentInputContextDefaultSink**
+
+    DataType = boolean
+
+    specifies the sink mode each InputContext will be created with. if not specified, it will default to the InputContext default sink value (false)
 
 <hr />
 

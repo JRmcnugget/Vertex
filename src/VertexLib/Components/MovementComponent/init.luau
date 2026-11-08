@@ -18,6 +18,7 @@ function Component.new(Manager)
 end
 
 function Component:onUpdate()
+    self.Manager.ActiveThreads["poop"] = task.spawn(function() end)
     if self.Manager.ActiveState.Name ~= "Dead" then
         local moveDir = self.Manager.Shared.humanoid.MoveDirection
         self.Manager.Shared.inputDirection = moveDir

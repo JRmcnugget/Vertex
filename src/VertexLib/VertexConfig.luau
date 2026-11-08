@@ -4,8 +4,10 @@ local VertexConfig = {
     printWarnings = true,
     stateFolder = game.ReplicatedStorage.VertexLib:FindFirstChild('States'),
     componentFolder = game.ReplicatedStorage.VertexLib:FindFirstChild('Components'),
-    mobileButtonTemplate = nil,
-    componentInputBindPrefix = "On"
+    componentInputBindPrefix = "On",
+    componentDefaultInputContext = "Default",
+    componentInputContextDefaultPriority = 2000,
+    componentInputContextDefaultSink = false
 }
 
 return VertexConfig

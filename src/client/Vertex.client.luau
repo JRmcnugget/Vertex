@@ -12,12 +12,14 @@ local VertexManager = {}
 -- VertexManager Properties
 VertexManager.Config = require(VertexLib.VertexConfig)
 VertexManager.ActiveState = nil
+VertexManager.PreviousState = nil
 VertexManager.Player = nil
 VertexManager.AwaitingSignal = false
 VertexManager.States = {}
 VertexManager.Components = {}
+VertexManager.InputContexts = nil
 VertexManager.ActiveThreads = {}
-VertexManager.CleanupThread = "None"
+VertexManager.CleanupThread = nil
 VertexManager.BindedEvents = {}
 
 -- Shared // variables available for ready access across any State or Component
@@ -30,7 +32,7 @@ VertexManager.Shared = {
     controllerManager = nil,
     groundSensor = nil,
     airController = nil,
-    groundcontroller = nil,
+    groundController = nil,
     inputDirection = Vector3.new(0,0,0),
     lookDirection = Vector3.new(0,0,0),
     isCrouched = false,
@@ -61,11 +63,17 @@ VertexManager.StateDefaults.__index = VertexManager.StateDefaults
 function VertexManager:Init()
     local plrInstance = game.Players.LocalPlayer
     self.Player = plrInstance
-    
+    self.InputContexts = Instance.new("Folder")
+    self.InputContexts.Parent = self.Player
+    self.InputContexts.Name = "VertexInputContexts"
+
     self:loadStates()
     self:loadComponents()
-    
+
     self.Player.CharacterAdded:Connect(function(newModel)
+        if self.CleanupThread then 
+            task.cancel(self.CleanupThread)
+        end
         self.CleanupThread = task.defer(function() -- task.defer must be used here to prevent instability with renderstep and thread desyncs
             self:Cleanup()
             self:updateCharacter(newModel) 
@@ -79,10 +87,11 @@ end
 function VertexManager:Cleanup()
     for count, thread in pairs(self.ActiveThreads) do
         task.cancel(thread)
-        self.ActiveThreads[thread] = nil
+        self.ActiveThreads[count] = nil
     end
     self.ActiveState = nil
     self.AwaitingSignal = false
+    self.PreviousState = nil
     self.Shared = table.clone(self.SharedDefault)
 end
 
@@ -101,7 +110,7 @@ function VertexManager:updateCharacter(newModel)
     return true
 end
 
--- binds the given function using contextactionservice
+-- binds the given function using Input Action System
 -- function, instance, string
 function VertexManager:createBinds(func, component, inputAction)
 
@@ -145,10 +154,11 @@ function VertexManager:changeState(newState, override, dt)
                     if requestedState and requestedState.onEnter then
                         requestedState:onEnter(dt)
                     elseif self.Config.printWarnings then
-                        warn("State"..newStateName.." does not have onEnter")
+                        warn("State "..newStateName.." does not have onEnter")
                     end
                     self.AwaitingSignal = false
                     self.ActiveThreads["ChangeState"] = nil
+                    self.PreviousState = previousState
                 end)
 
             end
@@ -204,16 +214,49 @@ function VertexManager:loadComponents()
                 if bindInstance:IsA("InputAction") then
                     local prefix = self.Config.componentInputBindPrefix and self.Config.componentInputBindPrefix or ""
                     local override = bindInstance:GetAttribute("handlerOverride")
+                    if override and typeof(override) ~= "string" then 
+                        warn("handlerOverride of InputAction "..bindInstance.Name.." must be a string attribute!")
+                        continue
+                    end
                     local requestEventName = override or (prefix..bindInstance.Name)
                     local requestedEvent = componentInstance[requestEventName]
+
+                    local usingDefault
+                    local preferredInputContext = bindInstance:GetAttribute("inputContext")
+                    if not preferredInputContext then 
+                        usingDefault = true
+                        preferredInputContext = self.Config.componentDefaultInputContext
+                    end
+                    if typeof(preferredInputContext) ~= "string" then
+                        if not usingDefault then
+                            warn("inputContext of InputAction "..bindInstance.Name.." must be a string attribute!")
+                        else
+                            error("Default InputContext must be a string!!")
+                        end
+                        continue
+                    end
+                   
                     if requestedEvent then
-                        self.BindedEvents[componentName.."_"..requestEventName] = self:createBinds(requestedEvent, componentInstance, bindInstance)
+                        local inputContext = self.InputContexts:FindFirstChild(preferredInputContext)
+                        if not inputContext then
+                            inputContext = Instance.new("InputContext")
+                            inputContext.Name = preferredInputContext
+                            inputContext.Parent = self.InputContexts
+                            inputContext.Priority = self.Config.componentInputContextDefaultPriority or inputContext.Priority
+                            inputContext.Sink = self.Config.componentInputContextDefaultSink or inputContext.Sink
+                        end
+
+                        local bindInstanceClone = bindInstance:Clone()
+                        bindInstanceClone.Parent = inputContext
+                        bindInstanceClone.Name = componentName.."_"..bindInstance.Name
+                        
+                        self.BindedEvents[componentName.."_"..requestEventName] = self:createBinds(requestedEvent, componentInstance, bindInstanceClone)
                     elseif self.Config.printWarnings then
                         warn("Function "..requestEventName.." of component "..componentName.." does not exist! Did you type the InputAction or Function name correctly?")
                     end
                 else
                     if self.Config.printWarnings then
-                        warn("Component "..bindInstance.Name.." is not an InputAction, ignoring...")
+                        warn("Child "..bindInstance.Name.." of "..componentName.." is not an InputAction, ignoring...")
                     end
                 end
             end
@@ -239,7 +282,7 @@ function VertexManager:update(dt)
     for count, component in pairs(self.Components) do
         if component.onUpdate then
             local updateInterval = component.updateFrequency and 1/component.updateFrequency or nil
-            local componentAccumilate = component.accumulator + dt
+            local componentAccumilate = (component.accumulator or 0) + dt
             if updateInterval and componentAccumilate then
                 if componentAccumilate < updateInterval then
                     component.accumulator = componentAccumilate

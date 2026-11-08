@@ -230,7 +230,7 @@ For binded events such as ```Component:OnExampleEvent(newState)```, the variable
 
    Datatype = array
    
-   Contains a reference to the previously active state
+   Contains a reference to the previously active state. Is set after the previous component's onExit() finishes.
 
   * **VertexManager.Player**
 

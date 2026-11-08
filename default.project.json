@@ -16,9 +16,7 @@
     },
 
     "StarterGui": {
-      "Server": {
-        "$path": "src/assets/plrGUI"
-      }
+      "$path": "src/assets/plrGUI"
     },
 
     "StarterPlayer": {

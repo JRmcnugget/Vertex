@@ -70,16 +70,21 @@ function VertexManager:Init()
     self:loadStates()
     self:loadComponents()
 
+    if self.Player.Character then self:onCharacterCreate(self.Player.Character) end
     self.Player.CharacterAdded:Connect(function(newModel)
+        self:onCharacterCreate(newModel)
+    end)
+end
+
+function VertexManager:onCharacterCreate(newModel)
         if self.CleanupThread then 
             task.cancel(self.CleanupThread)
         end
         self.CleanupThread = task.defer(function() -- task.defer must be used here to prevent instability with renderstep and thread desyncs
-            self:Cleanup()
-            self:updateCharacter(newModel) 
-            self:changeState(self.Config.initalState, true)
-            self.CleanupThread = nil
-        end)
+        self:Cleanup()
+        self:updateCharacter(newModel) 
+        self:changeState(self.Config.initalState, true)
+        self.CleanupThread = nil
     end)
 end
 
@@ -287,7 +292,7 @@ function VertexManager:update(dt)
                 if componentAccumilate < updateInterval then
                     component.accumulator = componentAccumilate
                 else
-                    component:onUpdate(dt)
+                    component:onUpdate(dt, componentAccumilate)
                     component.accumulator = 0
                 end
             else
